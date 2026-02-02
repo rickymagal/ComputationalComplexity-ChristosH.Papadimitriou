@@ -6,11 +6,11 @@ Christos H. Papadimitriou
 *Computational Complexity*  
 Addison–Wesley
 
-The purpose of this repository is to provide **chapter-by-chapter solutions** to *all* problems in the book, written at a level appropriate for graduate study and research.
+The objective of this project is to provide **chapter-by-chapter solutions** to *all* problems in the book, written at a level appropriate for graduate study and research.
 
 All solutions are:
 - Fully formal and explicit
-- Self-contained
+- Self-contained at the **chapter level**
 - Faithful to the book’s definitions, notation, and proof style
 
 ---
@@ -19,17 +19,20 @@ All solutions are:
 
 **The directory structure of this repository exactly mirrors the structure of the book.**
 
-Crucially:
+Key design principles:
 
-- **Problems appear only at the end of each chapter**, not at the end of each section.
-- Each chapter therefore contains a **single `problems/` directory** holding *all* problems for that chapter.
-- Sections are represented only as contextual subdirectories or references, not as containers for problems.
+- **Problems appear only at the end of each chapter**, exactly as in the book.
+- Each chapter contains a single **`problems/` directory**.
+- Each `problems/` directory is a **self-contained LaTeX project** that compiles **all solutions for that chapter together**, including:
+  - all problem solutions of the chapter,
+  - a chapter-specific bibliography,
+  - a glossary / list of terms.
 
-This reflects the actual organization of *Computational Complexity*.
+There are **no standalone solution files compiled independently**.
 
 ---
 
-## Full Repository Structure
+## Global Repository Structure
 
 ### PART I — ALGORITHMS
 
@@ -163,17 +166,24 @@ part-05-beyond-np/
 
 ---
 
-## Solution Files
+## Internal Structure of Each `problems/` Directory
 
-Inside each `problems/` directory, solutions are named according to the book’s numbering, for example:
+Each `problems/` directory is a **single LaTeX project** that compiles **all solutions for that chapter together**.
 
 ```
-problem-1.4.2.md
-problem-8.4.7.tex
-problem-10.4.8.md
+problems/
+├── main.tex            # Entry point (compiled file)
+├── preamble.tex        # Packages, theorem environments, macros
+├── problems.tex        # Includes all problem solutions for the chapter
+├── glossary.tex        # Chapter-specific glossary / list of terms
+├── bibliography.bib    # Chapter-specific bibliography
+├── problem-X.Y.Z.tex   # Individual problem solution (included by problems.tex)
+└── figures/            # Figures used in this chapter
 ```
 
-Each solution is written to stand alone and does not assume access to other solutions.
+- Individual `problem-X.Y.Z.tex` files are **not standalone documents**.
+- They are included via `\input{}` from `problems.tex`.
+- Bibliography and glossary are resolved **at the chapter level**, not per problem.
 
 ---
 
@@ -185,6 +195,6 @@ This repository is a **work in progress**. Chapters are completed independently.
 
 ## Disclaimer
 
-This repository is intended strictly for **educational and academic use**.
-All problem statements remain the intellectual property of the author and publisher.
+This repository is intended strictly for **educational and academic use**.  
+All problem statements remain the intellectual property of the author and publisher.  
 Only original solution texts are provided here.
