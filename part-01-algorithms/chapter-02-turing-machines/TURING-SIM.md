@@ -130,4 +130,3 @@ This is convenient when you omit transitions that are unreachable on legal input
 
 - The simulator is deterministic and single-tape.
 - The tape is one-way (no negative indices): the left marker prevents falling off the left end, matching the book.
-- Tomorrow, when you draw machines in LaTeX, you can keep the `.tm` file as the source of truth and derive the TikZ/LaTeX diagram from it.
