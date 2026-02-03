@@ -1,0 +1,67 @@
+\subsection*{Problem 1.4.12}
+\addcontentsline{toc}{subsection}{Problem 1.4.12}
+
+\paragraph{Solution.}
+We analyze the augmentation algorithm for \gls{maxflow} (Ford--Fulkerson), under the rule:
+at each iteration, choose an \gls{augmentingpath} of minimum number of edges in the current
+\gls{residualnetwork} \(N(f)\), and augment by the bottleneck \gls{residualcapacity} along that path.
+This is the \gls{edmondskarp} strategy. \cite{edmonds_karp_1972,ford_fulkerson_1962}
+
+For a flow \(f\), let \(\dist_f(v)\) be the length of a shortest directed path from \(s\) to \(v\) in \(N(f)\)
+(or \(\infty\) if none exists). Let \(f'\) be the flow obtained after one augmentation.
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Distances do not decrease.}
+We claim that for every vertex \(v\in V\), \(\dist_{f'}(v)\ge \dist_f(v)\).
+
+Consider a shortest \(s\)-to-\(v\) path \(Q\) in \(N(f')\). Let \((x,y)\) be the last edge of \(Q\), so \(y=v\) and
+\(\dist_{f'}(x)=\dist_{f'}(y)-1\). Choose \(v\) with \(\dist_{f'}(v)<\dist_f(v)\) minimizing \(\dist_{f'}(v)\).
+Then \(\dist_{f'}(x)\ge \dist_f(x)\) by minimality.
+
+If \((x,y)\) is also an edge of \(N(f)\), then
+\[
+\dist_f(y)\le \dist_f(x)+1 \le \dist_{f'}(x)+1 = \dist_{f'}(y),
+\]
+contradicting \(\dist_{f'}(y)<\dist_f(y)\).
+
+Otherwise, \((x,y)\) was not residual under \(f\) but becomes residual under \(f'\). The only new residual edges
+created by an augmentation are reverse edges of the augmented path \(P\): thus \((x,y)\) must be of the form
+\((x,y)=(j,i)\) where \((i,j)\) lies on \(P\) in the forward direction. Since \(P\) is a shortest augmenting path
+in \(N(f)\), we have \(\dist_f(j)=\dist_f(i)+1\). Also \(\dist_{f'}(x)=\dist_{f'}(j)\ge \dist_f(j)\) by minimality,
+so
+\[
+\dist_{f'}(i)=\dist_{f'}(j)+1 \ge \dist_f(j)+1 = \dist_f(i)+2,
+\]
+and hence \(\dist_{f'}(y)=\dist_{f'}(i)\ge \dist_f(i)+2\). In particular \(\dist_{f'}(y)\ge \dist_f(y)\),
+contradiction. Therefore distances cannot decrease.
+
+\item \textbf{Bottleneck reversal forces a distance increase.}
+Suppose that at some stage, on the chosen shortest augmenting path \(P\) in \(N(f)\), the edge \((i,j)\) is a
+\gls{bottleneckedge}, i.e., it attains the minimum residual capacity along \(P\). Then \((i,j)\) becomes saturated
+after augmentation and the reverse residual edge \((j,i)\) appears in \(N(f')\).
+
+Assume that at a later stage, \((j,i)\) becomes a bottleneck edge on some chosen shortest augmenting path in
+\(N(g)\), for a later flow \(g\). Since \((j,i)\) lies on a shortest path in \(N(g)\), we have
+\(\dist_g(i)=\dist_g(j)+1\).
+
+From the stage when \((i,j)\) was on a shortest path, we know \(\dist_f(j)=\dist_f(i)+1\). By part (a), distances
+never decrease across augmentations, so \(\dist_g(j)\ge \dist_f(j)=\dist_f(i)+1\). Therefore
+\[
+\dist_g(i)=\dist_g(j)+1 \ge (\dist_f(i)+1)+1 = \dist_f(i)+2.
+\]
+In particular, the distance from \(s\) to \(i\) must increase before the reverse edge \((j,i)\) can be a bottleneck.
+
+\item \textbf{At most \(O(\lvert E\rvert\lvert V\rvert)\) augmentations.}
+Each augmentation saturates at least one bottleneck residual edge on the chosen shortest augmenting path.
+Fix an original directed edge \((u,v)\in E\). Consider the events where either \((u,v)\) or \((v,u)\) becomes a
+bottleneck edge of a chosen shortest augmenting path (these are the only times this original edge contributes a
+bottleneck in the residual network).
+
+By part (b), once \((u,v)\) is a bottleneck, before \((v,u)\) can later be a bottleneck, the distance \(\dist(u)\)
+must increase by at least \(2\). Distances are always at most \(\lvert V\rvert-1\) when finite, and by part (a) they
+never decrease. Hence the number of alternations of bottleneck direction for this pair is \(O(\lvert V\rvert)\), and
+therefore each original edge can be a bottleneck at most \(O(\lvert V\rvert)\) times overall.
+
+Since each augmentation saturates at least one bottleneck edge, the total number of augmentations is at most
+\(O(\lvert E\rvert\lvert V\rvert)\).
+\end{enumerate}

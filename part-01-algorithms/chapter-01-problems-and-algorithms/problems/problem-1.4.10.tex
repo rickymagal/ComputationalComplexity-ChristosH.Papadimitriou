@@ -1,0 +1,92 @@
+\subsection*{Problem 1.4.10}
+\addcontentsline{toc}{subsection}{Problem 1.4.10}
+
+\paragraph{Solution.}
+Let the functions be:
+\[
+\begin{aligned}
+(a)\;& n^2, \qquad
+(b)\;& n^3, \qquad
+(c)\;& n^2\log n, \qquad
+(d)\;& 2^n, \\
+(e)\;& n^n, \qquad
+(f)\;& n^{10\log_2 n}, \qquad
+(g)\;& 2^{2n}, \qquad
+(h)\;& 2^{2n+1}, \qquad
+(j)\;& \begin{cases}
+n^2 & \text{if \(n\) is odd},\\
+2^n & \text{if \(n\) is even}.
+\end{cases}
+\end{aligned}
+\]
+We use standard \gls{asymptoticO}, \gls{asymptoticOmega}, \gls{asymptoticTheta}. We also write
+\(f \in o(g)\) (see \gls{littleo}) to mean \(\lim_{n\to\infty} f(n)/g(n)=0\).
+
+\paragraph{Step 1: A strict growth chain for (a),(b),(c),(d),(e),(f),(g),(h).}
+We claim the following asymptotic hierarchy:
+\[
+n^2 \in o(n^2\log n) \in o(n^3) \in o\!\left(n^{10\log_2 n}\right) \in o(2^n) \in o(2^{2n}),
+\quad 2^{2n} \in \Theta(2^{2n+1}),
+\quad 2^{2n+1} \in o(n^n).
+\]
+Each step is justified as follows:
+\begin{itemize}
+\item \(\dfrac{n^2}{n^2\log n}=\dfrac{1}{\log n}\to 0\).
+\item \(\dfrac{n^2\log n}{n^3}=\dfrac{\log n}{n}\to 0\).
+\item \(\dfrac{n^3}{n^{10\log_2 n}} = n^{3-10\log_2 n}\to 0\) since \(10\log_2 n \to \infty\).
+\item Compare \(n^{10\log_2 n}\) to \(2^n\) by taking \(\log_2\):
+\[
+\log_2\!\left(n^{10\log_2 n}\right)=10(\log_2 n)^2 = o(n) = \log_2(2^n),
+\]
+hence \(n^{10\log_2 n} \in o(2^n)\).
+\item \(\dfrac{2^n}{2^{2n}} = 2^{-n}\to 0\).
+\item \(2^{2n+1}=2\cdot 2^{2n}\), so \(2^{2n}\in\Theta(2^{2n+1})\).
+\item Compare \(2^{2n+1}\) to \(n^n\) by taking \(\log_2\):
+\[
+\log_2(2^{2n+1})=2n+1,\qquad \log_2(n^n)=n\log_2 n,
+\]
+and \(n\log_2 n \gg 2n\), so \(2^{2n+1}\in o(n^n)\).
+\end{itemize}
+
+\paragraph{Consequence (pairs not involving (j)).}
+For any two distinct functions among \((a),(b),(c),(d),(e),(f),(g),(h)\), the slower-growing one is in
+\gls{asymptoticO} of the faster-growing one, and the faster-growing one is in \gls{asymptoticOmega} of the slower.
+The only \gls{asymptoticTheta} equivalence among these is \((g)\) and \((h)\), since they differ by a factor \(2\).
+
+\paragraph{Step 2: The exceptional function (j).}
+Define
+\[
+J(n)=\begin{cases}
+n^2 & \text{if \(n\) is odd},\\
+2^n & \text{if \(n\) is even}.
+\end{cases}
+\]
+Then \(J(n)\ge n^2\) for all \(n\), and \(J(2k)=2^{2k}\).
+
+\begin{itemize}
+\item Versus \((a)\) \(n^2\): \(J\in \Omega(n^2)\) (trivial) but \(J\notin O(n^2)\) because on even \(n\),
+\(J(n)=2^n\) and \(2^n/n^2\to\infty\). Thus \(J\) and \(n^2\) are not \gls{asymptoticTheta}-equivalent.
+Equivalently, \(n^2\in O(J)\) and \(J\in \Omega(n^2)\).
+
+\item Versus \((c)\) \(n^2\log n\), \((b)\) \(n^3\), and \((f)\) \(n^{10\log_2 n}\): \(J\) is \gls{incomparablefunc}
+with each of these functions. Indeed, on even \(n\), \(J(n)=2^n\) dominates any of them; hence \(J\notin O(g)\).
+On odd \(n\), \(J(n)=n^2\) is dominated by each of them for large \(n\); hence \(J\notin \Omega(g)\).
+Therefore neither (i) nor (ii) holds (and thus not (iii)) for these pairs.
+
+\item Versus \((d)\) \(2^n\): \(J\in O(2^n)\) because for even \(n\), \(J(n)=2^n\), and for odd \(n\ge 5\),
+\(n^2 \le 2^n\). But \(J\notin \Omega(2^n)\) since on odd \(n\), \(J(n)/2^n = n^2/2^n \to 0\).
+So \(J\) is strictly smaller than \(2^n\) along an infinite subsequence. Also \(2^n \notin O(J)\), because on odd
+\(n\), \(2^n/J(n)=2^n/n^2\to\infty\).
+
+\item Versus \((g)\) \(2^{2n}\) and \((h)\) \(2^{2n+1}\): \(J\in O(2^{2n})\) (and hence \(O(2^{2n+1})\)), but
+\(J\notin \Omega(2^{2n})\) since on odd \(n\), \(J(n)=n^2\) and \(n^2/2^{2n}\to 0\). Likewise,
+\(2^{2n}\notin O(J)\) because on even \(n\), \(2^{2n}/J(n)=2^{2n}/2^n=2^n\to\infty\).
+
+\item Versus \((e)\) \(n^n\): \(J\in O(n^n)\) (since \(J(n)\le 2^n \le n^n\) for all \(n\ge 2\)), but
+\(J\notin \Omega(n^n)\) because on odd \(n\), \(J(n)=n^2\) and \(n^2/n^n = n^{2-n}\to 0\).
+Also \(n^n\notin O(J)\) since on even \(n\), \(n^n/J(n)=n^n/2^n\to\infty\).
+\end{itemize}
+
+This fully determines which of (i) \(f\in O(g)\), (ii) \(f\in \Omega(g)\), or (iii) \(f\in \Theta(g)\) holds for
+any pair from the list: use the total order in Step 1 for pairs not involving \((j)\), and the case analysis above
+for pairs involving \(J\).

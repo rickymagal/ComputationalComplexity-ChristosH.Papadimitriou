@@ -32,3 +32,89 @@
   name={Kahn's algorithm},
   description={A linear-time algorithm for topological sorting that repeatedly removes sources, updating indegrees of out-neighbors}
 }
+\newglossaryentry{bipartitegraph}{
+  name={bipartite graph},
+  description={A graph whose vertices can be partitioned into two sets \(A,B\) such that every edge has one endpoint in \(A\) and the other in \(B\)}
+}
+
+\newglossaryentry{oddcycle}{
+  name={odd cycle},
+  description={A cycle whose number of edges is odd}
+}
+
+\newglossaryentry{twocoloring}{
+  name={two-coloring},
+  description={An assignment of two colors (or labels \(0,1\)) to vertices so that adjacent vertices receive different colors}
+}
+\newglossaryentry{logtwo}{
+  name={\(\log_2\)},
+  description={Logarithm base \(2\)}
+}
+\newglossaryentry{asymptoticO}{
+  name={\(O(\cdot)\)},
+  description={Big-O notation: \(f\in O(g)\) if there exist constants \(c>0\) and \(n_0\) such that \(f(n)\le c\,g(n)\) for all \(n\ge n_0\)}
+}
+
+\newglossaryentry{asymptoticOmega}{
+  name={\(\Omega(\cdot)\)},
+  description={Big-Omega notation: \(f\in \Omega(g)\) if there exist constants \(c>0\) and \(n_0\) such that \(f(n)\ge c\,g(n)\) for all \(n\ge n_0\)}
+}
+
+\newglossaryentry{asymptoticTheta}{
+  name={\(\Theta(\cdot)\)},
+  description={Big-Theta notation: \(f\in \Theta(g)\) if \(f\in O(g)\) and \(f\in \Omega(g)\)}
+}
+
+\newglossaryentry{littleo}{
+  name={\(o(\cdot)\)},
+  description={Little-o notation: \(f\in o(g)\) if \(\lim_{n\to\infty} f(n)/g(n)=0\)}
+}
+
+\newglossaryentry{incomparablefunc}{
+  name={asymptotically incomparable},
+  description={Two functions \(f,g\) are asymptotically incomparable if neither \(f\in O(g)\) nor \(f\in \Omega(g)\) holds}
+}
+\newglossaryentry{maxflow}{
+  name={maximum flow},
+  description={The problem of sending the largest possible amount of flow from a source \(s\) to a sink \(t\) in a capacitated directed network, subject to capacity constraints and flow conservation}
+}
+
+\newglossaryentry{residualcapacity}{
+  name={residual capacity},
+  description={The additional amount of flow that can be sent along a residual edge; for an edge \((u,v)\) it is \(c(u,v)-f(u,v)\) in the forward direction and \(f(u,v)\) in the reverse direction}
+}
+
+\newglossaryentry{residualnetwork}{
+  name={residual network},
+  description={Given a flow \(f\), the directed network \(N(f)\) whose edges indicate how the current flow can be increased or rerouted via residual capacities}
+}
+
+\newglossaryentry{augmentingpath}{
+  name={augmenting path},
+  description={An \(s\)-to-\(t\) path in the residual network along which the flow value can be increased by augmenting}
+}
+
+\newglossaryentry{bottleneckedge}{
+  name={bottleneck edge},
+  description={On an augmenting path, an edge whose residual capacity is minimum along the path; it limits the augmentation amount}
+}
+
+\newglossaryentry{edmondskarp}{
+  name={Edmonds--Karp algorithm},
+  description={A specialization of Ford--Fulkerson that always augments along a shortest (fewest-edge) augmenting path; it runs in \(O(\lvert V\rvert\lvert E\rvert^2)\) time}
+}
+\newglossaryentry{tsp}{
+  name={Traveling Salesman Problem},
+  description={Given distances between \(n\) cities, find a minimum-length tour that starts at a city, visits every city exactly once, and returns to the start}
+}
+
+\newglossaryentry{argmin}{
+  name={argmin},
+  description={For a function \(f\) on a finite domain, an \emph{argmin} is an input where \(f\) attains its minimum value}
+}
+
+\newglossaryentry{simplepath}{
+  name={simple path},
+  description={A path that does not repeat vertices}
+}
+    

@@ -1,0 +1,63 @@
+\subsection*{Problem 1.4.15}
+\addcontentsline{toc}{subsection}{Problem 1.4.15}
+
+\paragraph{Solution.}
+We are given a complete weighted graph on cities \(\{1,\dots,n\}\) with distances \(d_{ij}\).
+For each subset \(S\subseteq \{2,\dots,n\}\) and each \(j\in S\), define \(c[S,j]\) as the length of the shortest
+walk that starts at city \(1\), visits every city in \(S\) exactly once, and ends at city \(j\).
+This is the classical dynamic program for \gls{tsp}. \cite{held_karp_1962}
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Dynamic programming recurrence and algorithm.}
+The base cases are
+\[
+c[\{j\},j] = d_{1j}
+\qquad\text{for all } j\in\{2,\dots,n\}.
+\]
+For \(|S|\ge 2\), the recurrence is
+\[
+c[S,j] = \min_{i\in S\setminus\{j\}} \left( c[S\setminus\{j\}, i] + d_{ij} \right).
+\]
+Compute the values in increasing order of \(|S|\) (from \(1\) to \(n-1\)). Concretely:
+
+\begin{itemize}
+\item For \(k=1,2,\dots,n-1\):
+  \begin{itemize}
+  \item For each subset \(S\subseteq \{2,\dots,n\}\) with \(|S|=k\):
+    \begin{itemize}
+    \item For each \(j\in S\): set \(c[S,j]\) by the recurrence above.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+Each state \((S,j)\) depends only on strictly smaller subsets, so the ordering by \(|S|\) is valid.
+
+\item \textbf{Running time and space.}
+There are \(\sum_{k=1}^{n-1}\binom{n-1}{k}\cdot k = (n-1)2^{n-2} = \Theta(n2^n)\) states \((S,j)\).
+For each state, the recurrence takes a minimum over at most \(|S|-1 \le n\) choices of \(i\). Therefore the total
+running time is
+\[
+\Theta(n2^n)\cdot \Theta(n) = \Theta(n^2 2^n),
+\]
+which is \(O(n^2 2^n)\) as required.
+
+Space is \(\Theta(n2^n)\) to store all values \(c[S,j]\). If we also store an \gls{argmin} predecessor pointer for
+each state (to reconstruct an optimal tour), the space remains \(\Theta(n2^n)\).
+
+\item \textbf{Shortest path from 1 to \(n\) without visiting all cities.}
+If we only want the shortest path from \(1\) to \(n\) (in the usual graph-theoretic sense), tracking the exact
+subset \(S\) of visited cities is unnecessary: shortest paths with nonnegative weights can be assumed \gls{simplepath}
+(no repeated vertices), hence they use at most \(n-1\) edges.
+
+A standard polynomial-time dynamic program indexed only by the number of edges suffices (this is the
+Bellman--Ford style DP). Define \(D[k,v]\) as the minimum weight of a path from \(1\) to \(v\) using at most \(k\)
+edges. Initialize \(D[0,1]=0\) and \(D[0,v]=\infty\) for \(v\ne 1\). For \(k\ge 1\),
+\[
+D[k,v] = \min\Bigl(D[k-1,v],\ \min_{u\ne v}\bigl(D[k-1,u] + d_{uv}\bigr)\Bigr).
+\]
+After \(n-1\) iterations, \(D[n-1,n]\) equals the shortest-path distance from \(1\) to \(n\).
+
+This runs in \(O(n)\) iterations; each iteration computes \(n\) values, each via a minimum over \(O(n)\)
+predecessors, so the time is \(O(n^3)\) and the space is \(O(n^2)\). Thus the problem is solvable in polynomial
+time, and the dependence on \(|S|\) can be replaced by the scalar parameter \(k\) (number of edges).
+\end{enumerate}

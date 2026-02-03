@@ -1,0 +1,40 @@
+\subsection*{Problem 1.4.5}
+\addcontentsline{toc}{subsection}{Problem 1.4.5}
+
+\paragraph{Solution.}
+We consider an undirected graph \(G=(V,E)\). A \gls{bipartitegraph} is a graph whose vertices can be
+partitioned into two sets \(A,B\) such that every edge has one endpoint in \(A\) and the other in \(B\).
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{\(G\) is bipartite iff it has no \gls{oddcycle}.}
+
+(\(\Rightarrow\)) Suppose \(G\) is bipartite with partition \(V=A\cup B\). Along any cycle, vertices must
+alternate between \(A\) and \(B\) (because every edge crosses the cut \((A,B)\)). Therefore the cycle length is
+even. Hence there is no \gls{oddcycle}.
+
+(\(\Leftarrow\)) Suppose \(G\) has no \gls{oddcycle}. Fix a connected component and choose a root \(r\).
+Define a \gls{twocoloring} by \gls{bfs} layers: place a vertex \(v\) in \(A\) iff the shortest-path distance
+\(\dist(r,v)\) is even, and in \(B\) iff \(\dist(r,v)\) is odd.
+
+We claim that no edge has both endpoints in \(A\) (and similarly for \(B\)). If there were an edge \(\{x,y\}\in E\)
+with \(\dist(r,x)\equiv \dist(r,y)\pmod 2\), let \(P_x\) and \(P_y\) be shortest paths from \(r\) to \(x\) and \(r\)
+to \(y\). Let \(z\) be their last common vertex (the point where they diverge). Then the subpaths from \(z\) to
+\(x\) and from \(z\) to \(y\), together with the edge \(\{x,y\}\), form a cycle of length
+\(\dist(z,x)+\dist(z,y)+1\). Since \(\dist(r,x)\equiv \dist(r,y)\pmod 2\), we have
+\(\dist(z,x)\equiv \dist(z,y)\pmod 2\), so \(\dist(z,x)+\dist(z,y)+1\) is odd. This produces a \gls{oddcycle},
+contradiction. Therefore every edge crosses between \(A\) and \(B\), and the component is bipartite. Doing this
+independently for each component yields a bipartition of \(G\).
+
+\item \textbf{Polynomial-time algorithm to test bipartiteness.}
+Run \gls{bfs} (or \gls{dfs}) in each connected component while maintaining a \gls{twocoloring}.
+Initialize all vertices as uncolored. For each uncolored start vertex \(r\), color it \(0\) and perform \gls{bfs}.
+When exploring an edge \(\{u,v\}\):
+\begin{itemize}
+\item if \(v\) is uncolored, assign it color \(1-\text{color}(u)\) and continue;
+\item if \(v\) is already colored and \(\text{color}(v)=\text{color}(u)\), reject (an odd cycle exists).
+\end{itemize}
+If all edges are processed without conflict, accept and return the induced partition.
+
+With \glspl{adjacencylist}, each edge is examined at most twice (once from each endpoint), so the running time is
+\(O(\lvert V\rvert+\lvert E\rvert)\).
+\end{enumerate}
