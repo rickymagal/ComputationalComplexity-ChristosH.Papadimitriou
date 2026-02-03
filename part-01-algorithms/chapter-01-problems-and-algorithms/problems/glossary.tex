@@ -1,4 +1,34 @@
-\newglossaryentry{np}{
-  name={NP},
-  description={Nondeterministic Polynomial Time}
+\newacronym{bfs}{BFS}{breadth-first search}
+\newacronym{dfs}{DFS}{depth-first search}
+
+\newglossaryentry{adjacencylist}{
+  name={adjacency list},
+  description={A representation of a graph where each vertex \(u\) stores the list of its outgoing (or incident) neighbors; scanning all lists processes each edge once}
+}
+
+\newglossaryentry{worklist}{
+  name={worklist},
+  description={A data structure (typically a queue or stack) that stores discovered but not-yet-processed vertices during graph search}
+}
+
+\newacronym{dag}{DAG}{directed acyclic graph}
+
+\newglossaryentry{indegree}{
+  name={indegree},
+  description={For a directed graph, the number of edges entering a vertex \(v\)}
+}
+
+\newglossaryentry{source}{
+  name={source},
+  description={A vertex of indegree \(0\) in a directed graph}
+}
+
+\newglossaryentry{topologicalorder}{
+  name={topological ordering},
+  description={A numbering of the vertices \(1,\dots,n\) such that every edge goes from a lower number to a higher number}
+}
+
+\newglossaryentry{kahnsalgorithm}{
+  name={Kahn's algorithm},
+  description={A linear-time algorithm for topological sorting that repeatedly removes sources, updating indegrees of out-neighbors}
 }

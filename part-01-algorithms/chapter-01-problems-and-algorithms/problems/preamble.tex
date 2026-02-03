@@ -2,10 +2,13 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{enumitem}
-\usepackage{glossaries}
+\usepackage[acronym]{glossaries}
 
 \geometry{margin=1in}
-\makeglossaries
+
+% No-index glossaries: avoids external makeindex/makeglossaries steps.
+\makenoidxglossaries
+\loadglsentries{glossary}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}

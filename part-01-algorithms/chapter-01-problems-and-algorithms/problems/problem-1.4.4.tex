@@ -1,0 +1,48 @@
+\subsection*{Problem 1.4.4}
+\addcontentsline{toc}{subsection}{Problem 1.4.4}
+
+\paragraph{Solution.}
+Let \(G=(V,E)\) be a finite directed graph. Recall that \(G\) is \gls{dag} if it has no directed cycle.
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Every \gls{dag} has a \gls{source}.}
+Assume \(G\) is acyclic. We show that \(G\) has a vertex of \gls{indegree} \(0\).
+
+Suppose, for contradiction, that every vertex has \gls{indegree} at least \(1\). Pick any \(v_0\in V\).
+Since \(v_0\) has an incoming edge, choose \(v_1\) with \((v_1,v_0)\in E\). Similarly, choose
+\(v_2\) with \((v_2,v_1)\in E\), and continue, obtaining a sequence \(v_0,v_1,v_2,\dots\).
+Because \(V\) is finite, some vertex repeats: \(v_i=v_j\) for some \(i<j\). Then
+\((v_{i+1},v_i),(v_{i+2},v_{i+1}),\dots,(v_j,v_{j-1})\) forms a directed cycle, contradicting acyclicity.
+Hence some vertex must have \gls{indegree} \(0\), i.e., a \gls{source} exists.
+
+\item \textbf{Acyclicity iff a \gls{topologicalorder} exists.}
+
+(\(\Rightarrow\)) Assume \(G\) is acyclic. Repeatedly select a \gls{source} (guaranteed by (a)), assign it the
+next label \(1,2,\dots\), and delete it together with its outgoing edges. Deleting a vertex cannot create a
+cycle, so the remaining graph stays acyclic and the process continues until all vertices are labeled.
+If a directed edge \((u,v)\) remains when \(u\) is labeled, then \(v\) is still present; thus \(v\) is labeled later.
+Therefore every edge goes from a lower number to a higher number, i.e., the labeling is a \gls{topologicalorder}.
+
+(\(\Leftarrow\)) Conversely, assume the vertices can be numbered \(1,\dots,n\) so that every edge \((u,v)\in E\)
+satisfies \(\text{num}(u) < \text{num}(v)\). Along any directed walk, the numbers strictly increase, so no directed
+cycle can exist. Hence \(G\) is acyclic.
+
+\item \textbf{Algorithm in \(O(\lvert E\rvert+\lvert V\rvert)\) time, with constant work per edge.}
+Implement the idea in (b) via \gls{kahnsalgorithm}.
+
+\begin{enumerate}[label=\arabic*.]
+\item Compute \(\text{indeg}[v]\) for all \(v\in V\) by scanning the edge list once and incrementing
+\(\text{indeg}[v]\) for each edge \((u,v)\in E\).
+\item Initialize a queue (a \gls{worklist}) with all vertices \(v\) such that \(\text{indeg}[v]=0\).
+\item Repeatedly pop a vertex \(u\) from the queue, output it next in the ordering, and for each outgoing edge
+\((u,w)\), decrement \(\text{indeg}[w]\). If \(\text{indeg}[w]\) becomes \(0\), push \(w\) into the queue.
+\end{enumerate}
+
+If the algorithm outputs all vertices, then it has produced a \gls{topologicalorder}, so \(G\) is acyclic by (b).
+If it stops early (queue empty while some vertices remain), then the remaining subgraph has no \gls{source},
+so by (a) it must contain a directed cycle; hence \(G\) is not acyclic.
+
+Each edge \((u,w)\) is examined exactly once when \(u\) is popped, and causes one constant-time decrement, so the
+total edge-processing work is \(O(\lvert E\rvert)\). The remaining work (initialization, queue operations) is
+\(O(\lvert V\rvert)\). Thus the algorithm runs in \(O(\lvert E\rvert+\lvert V\rvert)\) time.
+\end{enumerate}
