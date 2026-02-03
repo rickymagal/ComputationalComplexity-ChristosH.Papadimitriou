@@ -1,0 +1,33 @@
+\subsection*{Problem 1.4.2}
+\addcontentsline{toc}{subsection}{Problem 1.4.2}
+
+\paragraph{Solution.}
+Consider the standard reachability search from a start vertex \(1\). Maintain a set \(S\) of discovered
+vertices, initialized as \(S=\{1\}\). Repeatedly add a vertex \(v\notin S\) whenever there exists an edge
+\((u,v)\in E\) with \(u\in S\). Stop when no such edge exists.
+
+\begin{enumerate}[label=(\alph*)]
+\item We prove by induction on \(i\) that if \(v\) is the \(i\)-th vertex added to \(S\), then there exists a
+directed path from \(1\) to \(v\).
+
+\emph{Base case.} The first vertex added is \(1\), and the length-\(0\) path suffices.
+
+\emph{Inductive step.} Assume the claim holds for the first \(i-1\) added vertices. Let \(v\) be the \(i\)-th
+vertex added. By the rule of the algorithm, \(v\) is added because there exists an edge \((u,v)\in E\) with
+\(u\in S\) at that moment. Since \(u\) was added earlier, by the induction hypothesis there is a path from
+\(1\) to \(u\). Appending the edge \((u,v)\) yields a path from \(1\) to \(v\).
+
+\item We prove by induction on \(\ell\) that if \(v\) is reachable from \(1\) by a directed path of \(\ell\)
+edges, then the algorithm will add \(v\) to \(S\).
+
+\emph{Base case.} If \(\ell=0\), then \(v=1\), and \(1\in S\) initially.
+
+\emph{Inductive step.} Assume the statement holds for all vertices reachable by a path of length \(\ell-1\),
+for some \(\ell\ge 1\). Let \(v\) be reachable from \(1\) by a path of length \(\ell\), and fix such a path.
+Let \(u\) be the vertex immediately preceding \(v\) on this path. Then \(u\) is reachable by a path of length
+\(\ell-1\), hence \(u\) is added to \(S\) by the induction hypothesis. Once \(u\in S\), the edge \((u,v)\)
+witnesses that \(v\) is eligible to be added, so the algorithm will eventually add \(v\) (it continues until no
+eligible edge remains).
+\end{enumerate}
+
+Parts (a) and (b) together imply that the algorithm adds exactly the vertices reachable from \(1\).
