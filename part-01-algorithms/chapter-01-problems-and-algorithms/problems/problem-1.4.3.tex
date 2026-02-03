@@ -1,0 +1,26 @@
+\subsection*{Problem 1.4.3}
+\addcontentsline{toc}{subsection}{Problem 1.4.3}
+
+\paragraph{Solution.}
+Implement the search using adjacency lists. For each vertex \(u\), store its outgoing neighbors
+\(\Gamma^+(u)=\{v : (u,v)\in E\}\). Maintain a boolean array \(\texttt{seen}[\cdot]\) and a worklist
+(queue for BFS or stack for DFS).
+
+Initialize \(\texttt{seen}[1]=\texttt{true}\) and push \(1\) into the worklist. While the worklist is nonempty,
+pop a vertex \(u\) and scan its adjacency list \(\Gamma^+(u)\). For each neighbor \(v\in \Gamma^+(u)\),
+the edge \((u,v)\) is \emph{processed} by performing the constant-time check of \(\texttt{seen}[v]\) and, if
+false, setting it to true and pushing \(v\) into the worklist.
+
+\paragraph{Each edge is processed at most once.}
+A vertex \(u\) is popped at most once: after \(\texttt{seen}[u]\) becomes true, \(u\) is inserted into the
+worklist at most once, and therefore its adjacency list is scanned at most once. Since an edge \((u,v)\)
+appears only in the adjacency list of its tail \(u\), it is examined only when \(u\) is popped. Hence each
+edge \((u,v)\in E\) is processed at most once.
+
+\paragraph{Running time.}
+The total cost of scanning all adjacency lists is
+\[
+\sum_{u\in V} \abs{\Gamma^+(u)} = \abs{E},
+\]
+and the per-edge work is constant. Therefore the algorithm runs in \(\bigO(\abs{E})\) edge-processing steps
+(and in \(\bigO(\abs{V}+\abs{E})\) total time if one also counts initialization and worklist operations).
