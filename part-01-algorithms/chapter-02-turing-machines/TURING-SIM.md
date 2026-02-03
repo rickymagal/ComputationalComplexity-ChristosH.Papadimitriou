@@ -1,6 +1,6 @@
 # TURING-SIM
 
-This repository includes a small single-tape Turing machine simulator that follows the conventions used in Chapter 2 of Papadimitriou.
+This chapter includes a small single-tape Turing machine simulator that follows the conventions used in Chapter 2 of Papadimitriou.
 
 ## Conventions implemented
 
