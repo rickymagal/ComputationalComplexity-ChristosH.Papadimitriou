@@ -27,6 +27,7 @@ Key design principles:
   - all problem solutions of the chapter,
   - a chapter-specific bibliography,
   - a glossary / list of terms.
+- The compiled PDF for each chapter is placed at the **repository root**.
 
 There are **no standalone solution files compiled independently**.
 
