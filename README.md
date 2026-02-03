@@ -1,4 +1,4 @@
-# Computational Complexity — Complete Solutions Repository
+# Computational Complexity — Complete Guide Repository
 
 This repository contains **complete, rigorous solutions to all problems** from:
 
