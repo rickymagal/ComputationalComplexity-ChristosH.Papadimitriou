@@ -1,6 +1,15 @@
 \subsection*{Problem 1.4.4}
 \addcontentsline{toc}{subsection}{Problem 1.4.4}
 
+\paragraph{Statement.}
+(a) A directed graph is acyclic if it has no cycles. Show that any acyclic graph has a source
+(a node with no incoming edges).
+(b) Show that a graph with \(n\) nodes is acyclic if and only if its nodes can be numbered
+\(1\) to \(n\) so that all edges go from lower to higher numbers (use the property in (a) above repeatedly).
+(c) Describe a polynomial-time algorithm that decides whether a graph is acyclic.
+(Implement the idea in (b) above. With care, your algorithm should not spend more than a constant amount of time per edge.)
+
+
 \paragraph{Solution.}
 Let \(G=(V,E)\) be a finite directed graph. Recall that \(G\) is \gls{dag} if it has no directed cycle.
 

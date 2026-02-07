@@ -1,6 +1,10 @@
 \subsection*{Problem 1.4.3}
 \addcontentsline{toc}{subsection}{Problem 1.4.3}
 
+\paragraph{Statement.}
+Show that in the search algorithm each edge of \(G\) is processed at most once.
+Conclude that the algorithm can be implemented to run in \(O(|E|)\) steps.
+
 \paragraph{Solution.}
 Implement the search using \glspl{adjacencylist}. For each vertex \(u\), store its outgoing neighbors
 \(\Gamma^+(u)=\{v : (u,v)\in E\}\). Maintain a boolean array \(\texttt{seen}[\cdot]\) and a \gls{worklist}

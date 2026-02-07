@@ -1,6 +1,14 @@
 \subsection*{Problem 1.4.10}
 \addcontentsline{toc}{subsection}{Problem 1.4.10}
 
+\paragraph{Statement.}
+Let \(f(n)\) and \(g(n)\) be any two of the following functions. Determine whether (i) \(f(n)=O(g(n))\);
+(ii) \(f(n)=\Omega(g(n))\); or (iii) \(f(n)=\Theta(g(n))\):
+(a) \(n^2\); \quad (b) \(n^3\); \quad (c) \(n^2\log n\)
+(d) \(2^n\); \quad (e) \(n^n\); \quad (f) \(n^{\log n}\)
+(g) \(2^{2^n}\); \quad (h) \(2^{2^{n+1}}\); \quad (j) \(n^2\) if \(n\) is odd, \(2^n\) otherwise.
+
+
 \paragraph{Solution.}
 Let the functions be:
 \[
@@ -49,7 +57,7 @@ and \(n\log_2 n \gg 2n\), so \(2^{2n+1}\in o(n^n)\).
 \end{itemize}
 
 \paragraph{Consequence (pairs not involving (j)).}
-For any two distinct functions among \((a),(b),(c),(d),(e),(f),(g),(h)\), the slower-growing one is in
+For any two distinct functions among \((a),(b),(c),(d),(e), \\(f),(g),(h)\), the slower-growing one is in
 \gls{asymptoticO} of the faster-growing one, and the faster-growing one is in \gls{asymptoticOmega} of the slower.
 The only \gls{asymptoticTheta} equivalence among these is \((g)\) and \((h)\), since they differ by a factor \(2\).
 
