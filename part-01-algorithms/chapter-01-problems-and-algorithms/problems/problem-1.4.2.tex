@@ -1,6 +1,10 @@
 \subsection*{Problem 1.4.2}
 \addcontentsline{toc}{subsection}{Problem 1.4.2}
 
+\paragraph{Statement.}
+(a) Show by induction on \(i\) that, if \(v\) is the \(i\)th node added by the search algorithm of Section 1.1 to the set \(S\), then there is a path from node \(1\) to \(v\).
+(b) Show by induction on \(\ell\) that if node \(v\) is reachable from node \(1\) via a path with \(\ell\) edges, then the search algorithm will add \(v\) to set \(S\).
+
 \paragraph{Solution.}
 Consider the standard reachability search from a start vertex \(1\). Maintain a set \(S\) of discovered
 vertices, initialized as \(S=\{1\}\). Repeatedly add a vertex \(v\notin S\) whenever there exists an edge

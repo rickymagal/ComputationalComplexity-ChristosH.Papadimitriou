@@ -1,6 +1,18 @@
 \subsection*{Problem 1.4.15}
 \addcontentsline{toc}{subsection}{Problem 1.4.15}
 
+\paragraph{Statement.}
+Suppose that we are given an instance of the TSP with \(n\) cities and distances \(d_{ij}\).
+For each subset \(S\) of the cities excluding city \(1\), and for each \(j \in S\), define \(c[S,j]\) to be the shortest path
+that starts from city \(1\), visits all cities in \(S\) and ends up in city \(j\).
+
+(a) Give an algorithm that calculates \(c[S,j]\) by dynamic programming, that is, progressing from smaller to larger sets \(S\).
+(b) Show that this algorithm solves the TSP in time \(O(n^2 2^n)\). What are the space requirements of the algorithm?
+(c) Suppose we wish to find the shortest (in the sense of sum of weights) path from \(1\) to \(n\), not necessarily visiting all cities.
+How would you modify the above algorithm? (Is the reference to \(S\) necessary now, or can it be replaced by simply \(|S|\)?)
+Show that this problem can be solved in polynomial time.
+
+
 \paragraph{Solution.}
 We are given a complete weighted graph on cities \(\{1,\dots,n\}\) with distances \(d_{ij}\).
 For each subset \(S\subseteq \{2,\dots,n\}\) and each \(j\in S\), define \(c[S,j]\) as the length of the shortest

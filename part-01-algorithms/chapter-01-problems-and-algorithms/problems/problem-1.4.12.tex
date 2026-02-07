@@ -1,6 +1,14 @@
 \subsection*{Problem 1.4.12}
 \addcontentsline{toc}{subsection}{Problem 1.4.12}
 
+\paragraph{Statement.}
+Show that, if in the augmentation algorithm of Section 1.2 we always augment by a shortest path, then
+(a) the distance of a node from \(s\) cannot decrease from an \(N(f)\) to the next. Furthermore,
+(b) if edge \((i,j)\) is the bottleneck at one stage (the edge along the augmenting path with the smallest capacity),
+then the distance of \(i\) from \(s\) must increase before it becomes a bottleneck in the opposite direction.
+(c) Conclude that there are at most \(O(|E||V|)\) augmentations.
+
+
 \paragraph{Solution.}
 We analyze the augmentation algorithm for \gls{maxflow} (Ford--Fulkerson), under the rule:
 at each iteration, choose an \gls{augmentingpath} of minimum number of edges in the current

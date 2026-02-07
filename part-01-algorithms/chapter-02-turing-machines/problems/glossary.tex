@@ -1,0 +1,40 @@
+\
+\newglossaryentry{turingmachine}{
+  name={Turing machine},
+  description={A finite-control abstract machine with an unbounded tape and a read/write head; Chapter II uses a left-end marker and a designated blank symbol}
+}
+
+\newglossaryentry{singletapetm}{
+  name={single-tape Turing machine},
+  description={A Turing machine with one tape and one head}
+}
+
+\newglossaryentry{multitapetm}{
+  name={\(k\)-tape Turing machine},
+  description={A Turing machine equipped with \(k\) tapes, each with its own head; one transition depends on the \(k\) scanned symbols}
+}
+
+\newglossaryentry{configuration}{
+  name={configuration},
+  description={An instantaneous description of a Turing machine: the current state, tape contents, and head positions}
+}
+
+\newglossaryentry{tapealphabet}{
+  name={tape alphabet},
+  description={The finite set \(\Gamma\) of symbols a Turing machine may write on its tape, including a designated blank symbol}
+}
+
+\newglossaryentry{track}{
+  name={track},
+  description={In a packed encoding, a track is one component of a tuple stored in each cell, representing one simulated tape cell}
+}
+
+\newglossaryentry{simulation}{
+  name={simulation},
+  description={A construction that transforms each step of one machine into a bounded sequence of steps of another machine while preserving acceptance and output behavior}
+}
+
+\newglossaryentry{overhead}{
+  name={overhead},
+  description={The multiplicative slowdown incurred when one computational model simulates another}
+}

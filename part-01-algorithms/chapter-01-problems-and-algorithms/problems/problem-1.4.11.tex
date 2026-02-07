@@ -1,0 +1,87 @@
+\
+\subsection*{Problem 1.4.11}
+\addcontentsline{toc}{subsection}{Problem 1.4.11}
+
+\paragraph{Statement.}
+The max-flow min-cut theorem: In any network the value of the maximum flow equals the capacity of the minimum cut.
+
+Here by a cut in a network \(N=(V,E,s,t,c)\) we mean a set \(S\) of nodes such that \(s\in S\) and \(t\notin S\).
+The capacity of the cut \(S\) is the sum of the capacities of all edges going out of \(S\).
+
+Give a proof of the max-flow min-cut theorem based on the augmentation algorithm of Section 1.2.
+(The value of any flow is always at most as large as the capacity of any cut. And, when the algorithm terminates,
+it suggests a cut which is at most as large as the flow.)
+
+\paragraph{Solution.}
+Let \(N=(V,E,s,t,c)\) be a directed network with capacities \(c:E\to\mathbb{R}_{\ge 0}\).
+A (feasible) flow is a function \(f:E\to\mathbb{R}_{\ge 0}\) such that \(0\le f(e)\le c(e)\) for all \(e\in E\), and for every
+vertex \(v\in V\setminus\{s,t\}\) we have flow conservation:
+\begin{equation}\label{eq:conservation}
+\sum_{(u,v)\in E} f(u,v) \;=\; \sum_{(v,w)\in E} f(v,w).
+\end{equation}
+The value of \(f\) is
+\begin{equation}\label{eq:value}
+\lvert f\rvert \;=\; \sum_{(s,w)\in E} f(s,w) \;-\; \sum_{(u,s)\in E} f(u,s).
+\end{equation}
+
+\paragraph{1) Any flow is bounded by any cut.}
+Fix a cut \(S\subseteq V\) with \(s\in S\) and \(t\notin S\). Its capacity is
+\begin{equation}\label{eq:cutcap}
+c(S) \;=\; \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} c(u,v).
+\end{equation}
+Define the net flow leaving \(S\) under \(f\) by
+\begin{equation}\label{eq:netout}
+f(S) \;=\; \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} f(u,v)\;-\;\sum_{\substack{(u,v)\in E\\ u\notin S,\,v\in S}} f(u,v).
+\end{equation}
+By summing the conservation equations \eqref{eq:conservation} over all \(v\in S\setminus\{s\}\), all internal edges cancel, and one obtains
+\(f(S)=\lvert f\rvert\). Therefore,
+\begin{equation}\label{eq:flowlecut}
+\lvert f\rvert \;=\; f(S)
+\;\le\; \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} f(u,v)
+\;\le\; \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} c(u,v)
+\;=\; c(S).
+\end{equation}
+So the value of any flow is at most the capacity of any cut.
+
+\paragraph{2) The augmentation algorithm produces a cut matching the final flow.}
+Consider the augmentation (Ford--Fulkerson) algorithm of Section 1.2.
+Given a current flow \(f\), define the residual capacity of a forward edge \((u,v)\in E\) as \(c(u,v)-f(u,v)\), and allow a
+backward residual edge \((v,u)\) with residual capacity \(f(u,v)\).
+Let \(N(f)\) be the resulting residual network.
+
+The algorithm repeats: find an \(s\)-to-\(t\) path in \(N(f)\) with all residual capacities positive (an augmenting path),
+augment by the minimum residual capacity along that path, and update \(f\).
+It terminates exactly when there is \emph{no} augmenting path from \(s\) to \(t\) in \(N(f)\).
+
+Let \(f^\star\) be the flow when the algorithm terminates. In the residual network \(N(f^\star)\), let
+\begin{equation}\label{eq:reachable}
+S \;=\; \{\,v\in V : \text{there is a path from } s \text{ to } v \text{ in } N(f^\star)\,\}.
+\end{equation}
+By definition, \(s\in S\). Since there is no augmenting path to \(t\), we have \(t\notin S\). Thus \(S\) is a cut.
+
+\paragraph{Claim: \(c(S)=\lvert f^\star\rvert\).}
+We show two properties of edges crossing the cut.
+
+\begin{itemize}
+\item If \((u,v)\in E\) with \(u\in S\) and \(v\notin S\), then its forward residual capacity is \(0\); otherwise
+there would be a residual edge \((u,v)\) of positive capacity and \(v\) would be reachable, contradicting \(v\notin S\).
+Hence \(c(u,v)-f^\star(u,v)=0\), i.e., \(f^\star(u,v)=c(u,v)\). Such edges are \emph{saturated}.
+
+\item If \((u,v)\in E\) with \(u\notin S\) and \(v\in S\), then its backward residual capacity must be \(0\); otherwise
+there would be a residual edge \((v,u)\) of positive capacity (coming from the possibility of canceling flow on \((u,v)\)),
+and then \(u\) would be reachable from \(s\), contradicting \(u\notin S\). Therefore \(f^\star(u,v)=0\). Such edges carry no flow.
+\end{itemize}
+
+Using these facts in \eqref{eq:netout} for the cut \(S\),
+\begin{align*}
+\lvert f^\star\rvert
+&= f^\star(S)\\
+&= \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} f^\star(u,v)\;-\;\sum_{\substack{(u,v)\in E\\ u\notin S,\,v\in S}} f^\star(u,v)\\
+&= \sum_{\substack{(u,v)\in E\\ u\in S,\,v\notin S}} c(u,v)\;-\;0
+\;=\; c(S).
+\end{align*}
+
+\paragraph{3) Conclusion (max-flow min-cut).}
+From Part 1, any flow value is at most any cut capacity. From Part 2, the terminating flow \(f^\star\) satisfies
+\(\lvert f^\star\rvert=c(S)\) for a particular cut \(S\). Therefore \(\lvert f^\star\rvert\) is the maximum possible flow value
+and \(c(S)\) is the minimum possible cut capacity, proving the max-flow min-cut theorem.
