@@ -1,22 +1,22 @@
-\
 \newglossaryentry{turingmachine}{
   name={Turing machine},
-  description={A finite-control abstract machine with an unbounded tape and a read/write head; Chapter II uses a left-end marker and a designated blank symbol}
+  description={A finite-control abstract machine with an unbounded tape and a read/write head; in this chapter, the tape has a left-end marker and a blank symbol}
 }
 
 \newglossaryentry{singletapetm}{
   name={single-tape Turing machine},
-  description={A Turing machine with one tape and one head}
+  description={A Turing machine with one work tape and one head; it can simulate multitape machines with polynomial overhead}
 }
 
 \newglossaryentry{multitapetm}{
-  name={\(k\)-tape Turing machine},
-  description={A Turing machine equipped with \(k\) tapes, each with its own head; one transition depends on the \(k\) scanned symbols}
+  name={\(k\)-tape \gls{turingmachine} },
+  sort={k-tape Turing machine},
+  description={A \gls{turingmachine} equipped with \(k\) tapes, each with its own head; one global transition depends on the \(k\) scanned symbols}
 }
 
 \newglossaryentry{configuration}{
   name={configuration},
-  description={An instantaneous description of a Turing machine: the current state, tape contents, and head positions}
+  description={An instantaneous description of a Turing machine: the current state, the full tape contents, and the head positions}
 }
 
 \newglossaryentry{tapealphabet}{
@@ -26,7 +26,7 @@
 
 \newglossaryentry{track}{
   name={track},
-  description={In a packed encoding, a track is one component of a tuple stored in each cell, representing one simulated tape cell}
+  description={In a packed encoding of several tapes on one tape, a track is one component of a tuple stored in each cell, representing one simulated tape cell}
 }
 
 \newglossaryentry{simulation}{
@@ -36,5 +36,44 @@
 
 \newglossaryentry{overhead}{
   name={overhead},
-  description={The multiplicative slowdown incurred when one computational model simulates another}
+  description={The multiplicative slowdown factor incurred when one computational model simulates another}
+}
+\
+
+
+\newglossaryentry{twodtape}{
+  name={two-dimensional tape},
+  description={A tape indexed by \(\mathbb{Z}\times\mathbb{Z}\) with a head that can move left/right/up/down}
+}
+
+\newglossaryentry{cursor}{
+  name={cursor},
+  description={The tape head position; for a two-dimensional tape it is a pair of coordinates \((x,y)\in\mathbb{Z}^2\)}
+}
+
+\newglossaryentry{transitionfunction}{
+  name={transition function},
+  description={The mapping \(\delta\) that determines, from the current state and scanned symbol(s), the next state, symbol(s) written, and head move(s)}
+}
+
+\
+
+\newglossaryentry{editoperation}{
+  name={edit operation},
+  description={A primitive tape update that can write, insert, or delete a symbol at the head position}
+}
+
+\newglossaryentry{insertoperation}{
+  name={insert},
+  description={Operation that inserts a symbol at the current head position and shifts the suffix one cell to the right}
+}
+
+\newglossaryentry{deleteoperation}{
+  name={delete},
+  description={Operation that removes the symbol at the current head position (if any) and shifts the suffix one cell to the left}
+}
+
+\newglossaryentry{transitionfunction}{
+  name={transition function},
+  description={The mapping \(\delta\) that determines, from the current state and scanned symbol(s), the next state, tape update, and head move(s)}
 }

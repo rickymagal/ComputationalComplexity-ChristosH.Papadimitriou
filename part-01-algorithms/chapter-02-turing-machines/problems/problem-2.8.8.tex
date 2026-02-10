@@ -1,0 +1,122 @@
+\
+\subsection*{Problem 2.8.8}
+\addcontentsline{toc}{subsection}{Problem 2.8.8}
+
+\paragraph{Statement.}
+Suppose that \glspl{turingmachine} can \gls{deleteoperation} and \gls{insertoperation} symbols in their string, instead of only overwriting.
+\begin{enumerate}[label=(\alph*)]
+\item Define carefully the \gls{transitionfunction} and the computation of such machines.
+\item Show that such a machine can be simulated by an ordinary \gls{turingmachine} with a quadratic loss of efficiency.
+\end{enumerate}
+
+\paragraph{Solution.}
+We formalize an \gls{editoperation}-TM (an ``insert/delete'' machine) and then simulate it by an ordinary overwrite-only machine.
+The simulation follows the standard theme that reasonable model variations preserve polynomial time, and here yields a quadratic overhead; see, e.g. \cite{sipser2012introduction,hopcroftullman1979}.
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Definition of the model.}
+An insert/delete \gls{turingmachine} \(M\) is a tuple
+\(
+M=(Q,\Sigma,\Gamma,u,\delta,s,\textsf{yes},\textsf{no})
+\)
+where \(Q\) is a finite set of states, \(\Sigma\subseteq\Gamma\) is the input alphabet, \(\Gamma\) is the tape alphabet,
+\(u\in\Gamma\) is the blank symbol, \(s\in Q\) is the start state, and \(\textsf{yes},\textsf{no}\in Q\) are halting states.
+
+\paragraph{The ``string'' and head position.}
+At any moment the tape content is required to be a finite string \(w\in\Gamma^*\) written contiguously starting at cell \(1\)
+(to the right of the left end marker), followed by blanks \(u\) forever. The head position is an index \(i\in\{1,\dots,\lvert w\rvert+1\}\),
+where \(i=\lvert w\rvert+1\) means the head is scanning the first blank immediately after the string. Thus the scanned symbol is
+\(
+a=w_i
+\)
+if \(1\le i\le \lvert w\rvert\), and \(a=u\) if \(i=\lvert w\rvert+1\).
+
+\paragraph{Transition function.}
+The \gls{transitionfunction} has the form
+\begin{equation}\label{eq:delta-edit}
+\delta:(Q\setminus\{\textsf{yes},\textsf{no}\})\times \Gamma \;\to\; Q\times \Gamma \times \{\textsf{write},\textsf{ins},\textsf{del}\}\times \{L,R,S\}.
+\end{equation}
+Given \(\delta(q,a)=(q',b,\mathsf{op},D)\), one step of computation from state \(q\) scanning \(a\) proceeds as follows.
+
+\begin{itemize}
+\item \textsf{write}: if \(1\le i\le \lvert w\rvert\), replace \(w_i\leftarrow b\); if \(i=\lvert w\rvert+1\), this appends \(b\) at the end
+(so the new string becomes \(wb\)).
+\item \textsf{ins} (insert): insert \(b\) \emph{at position \(i\)} and shift the suffix right by one:
+the new string is
+\(
+w' = w_1\cdots w_{i-1}\, b\, w_i\cdots w_{\lvert w\rvert}.
+\)
+In particular, if \(i=\lvert w\rvert+1\) this is again append.
+\item \textsf{del} (delete): if \(1\le i\le \lvert w\rvert\), delete \(w_i\) and shift the suffix left by one:
+\(
+w' = w_1\cdots w_{i-1}\, w_{i+1}\cdots w_{\lvert w\rvert}.
+\)
+If \(i=\lvert w\rvert+1\) (scanning the first blank), deletion is a no-op.
+\end{itemize}
+
+After applying \(\mathsf{op}\), the head index is updated by the move \(D\):
+\(
+i\leftarrow i-1
+\)
+if \(D=L\) and \(i>1\), otherwise \(i\leftarrow i\);
+\(
+i\leftarrow i+1
+\)
+if \(D=R\) and \(i\le \lvert w'\rvert\), otherwise \(i\leftarrow i\);
+and \(i\leftarrow i\) if \(D=S\).
+The state updates to \(q'\). A \gls{configuration} is therefore a triple
+\(
+(q,w,i)
+\)
+consisting of the current state, the current string, and the current head index.
+
+\item \textbf{Simulation by an ordinary TM with quadratic overhead.}
+Let \(M\) be an insert/delete machine that runs for at most \(t=t(n)\) steps on inputs of length \(n\).
+We construct an ordinary overwrite-only single-tape \gls{turingmachine} \(M'\) that simulates \(M\).
+
+\paragraph{Representation invariant.}
+\(M'\) stores the current string \(w\) contiguously on its tape (starting at cell \(1\)), followed by blanks.
+It also uses a marked version of the alphabet to indicate the simulated head position:
+for each \(a\in\Gamma\), \(M'\) has a symbol \(\widehat{a}\). Exactly one cell among \(1,\dots,\lvert w\rvert+1\) is marked:
+\(\widehat{a}\) if the head is scanning \(a\in\Gamma\), and \(\widehat{u}\) if the head is scanning the first blank after \(w\).
+This makes the scanned symbol and position locally identifiable during a sweep.
+
+\paragraph{Simulating operations.}
+Given \(q\) and the marked symbol \(\widehat{a}\), \(M'\) computes \(\delta(q,a)=(q',b,\mathsf{op},D)\) in its finite control.
+
+\begin{itemize}
+\item \textsf{write}: replace the marked cell by \(b\) (or, if it is \(\widehat{u}\), write \(b\) there, extending the string by one),
+then re-mark the appropriate neighbor according to \(D\). This costs \(O(1)\) time.
+
+\item \textsf{ins}: to insert \(b\) at the marked position, \(M'\) shifts the suffix one cell to the right.
+Concretely, it sweeps right to find the first blank after the string, then sweeps left performing the standard right-shift:
+carry the symbol in a control register and move it one cell right, until reaching the insertion point; finally write \(b\) at the insertion point.
+This is a linear-time shift in the current string length.
+
+\item \textsf{del}: to delete the symbol under the mark (if any), \(M'\) shifts the suffix one cell to the left.
+It overwrites the marked cell with the symbol to its right, then continues sweeping right, copying each symbol one cell left, until it reaches the final blank,
+which it leaves blank. Again this is linear-time in the current string length.
+\end{itemize}
+
+After the edit, \(M'\) moves the mark one step left/right/stay as specified by \(D\), using local changes plus (if needed) a short sweep to find the new mark position.
+The key point is that \textsf{ins} and \textsf{del} cost \(O(m)\) time where \(m\) is the current string length, while \textsf{write} costs \(O(1)\).
+
+\paragraph{Quadratic time bound.}
+Let \(m_r\) be the string length after \(r\) steps of \(M\). Each step can change the length by at most \(1\), hence
+\(
+m_r \le n + r
+\)
+for all \(r\). The simulation cost of step \(r\) is \(O(m_r)\), so the total simulation time is
+\begin{align*}
+\sum_{r=0}^{t-1} O(m_r)
+&\le \sum_{r=0}^{t-1} O(n+r)
+= O\!\left(tn + \sum_{r=0}^{t-1} r\right)
+= O\!\left(tn + t^2\right)
+= O(t^2).
+\end{align*}
+Thus \(M'\) simulates \(M\) with at most a quadratic slowdown.
+
+\paragraph{Conclusion.}
+Allowing \gls{insertoperation} and \gls{deleteoperation} does not increase computational power beyond ordinary \glspl{turingmachine};
+it only changes the cost model by at most a quadratic factor under straightforward simulation.
+\end{enumerate}

@@ -1,62 +1,53 @@
-\
 \subsection*{Problem 2.8.6}
 \addcontentsline{toc}{subsection}{Problem 2.8.6}
 
 \paragraph{Statement.}
-Give another proof of Theorem 2.1 by presenting the \(k\) strings not next to each other, but on top of each other. Analyze the efficiency of your simulation and compare with the proof of Theorem 2.1. (A single symbol of the simulating machine will encode \(k\) symbols of the simulated one. Naturally, the cursors will be all over the place.)
+Give another proof of Theorem 2.1 by presenting the \(k\) strings not next to each other, but on top of each other.
+Analyze the efficiency of your simulation and compare with the proof of Theorem 2.1.
+(A single symbol of the simulating machine will encode \(k\) symbols of the simulated one. Naturally, the cursors will be all over the place.)
 
 \paragraph{Solution.}
-Let \(M\) be a \gls{multitapetm} with \gls{tapealphabet} \(\Gamma\) and running time \(t(n)\) on inputs of length \(n\).
-We construct a \gls{singletapetm} \(M'\) that simulates \(M\) using a \emph{stacked} multi-\gls{track} encoding, giving an alternative proof of Theorem~2.1.
+Let \(M\) be a \gls{multitapetm} with \gls{tapealphabet} \(\Gamma\), and suppose \(M\) runs for at most \(t(n)\) steps
+on inputs of length \(n\). We construct a \gls{singletapetm} \(M'\) that simulates \(M\) by encoding the \(k\) tapes
+\emph{on top of each other} (multi-\gls{track} encoding). This is a standard simulation trick; see, e.g.,
+\cite{sipser2012introduction,hopcroftullman1979} for related encodings and simulations.
 
-\paragraph{Stacked encoding.}
-Fix \(k\) tracks.
-The tape of \(M'\) represents, at each position \(i\ge 0\), a \(k\)-tuple \((a_1,\dots,a_k)\in \Gamma^k\),
-where \(a_j\) is the symbol currently stored in cell \(i\) of tape \(j\) of \(M\).
-To represent head positions, \(M'\) uses a marked copy \(\widehat{\Gamma}=\{\widehat{a}:a\in\Gamma\}\):
-in each track, exactly one cell carries a marked symbol \(\widehat{a}\), indicating the head position of that simulated tape.
-Thus the alphabet of \(M'\) is a constant-size expansion of \(\Gamma^k\) (since \(k\) is fixed), and one symbol of \(M'\) encodes \(k\) symbols of \(M\) as required.
+\paragraph{Encoding (stacked tracks).}
+At each tape position \(i\ge 0\), \(M'\) stores a \(k\)-tuple \((a_1,\dots,a_k)\in \Gamma^k\), where \(a_j\) is the symbol
+in cell \(i\) of tape \(j\) of \(M\). Thus \emph{one} symbol of \(M'\) encodes \(k\) symbols of \(M\), exactly as required.
+
+To represent head positions, each track uses a marked version of \(\Gamma\): for each \(a\in\Gamma\) there is a marked
+symbol \(\widehat{a}\). A \gls{configuration} is encoded so that, in each track \(j\), exactly one cell is marked
+(the cell currently scanned by tape \(j\)'s head). The alphabet of \(M'\) is therefore a constant-size expansion of \(\Gamma^k\),
+since \(k\) is fixed.
 
 \paragraph{Simulating one step.}
-Suppose \(M\) is in some \gls{configuration} \(C\).
-To simulate one transition of \(M\) from \(C\), \(M'\) must:
+Assume \(M\) is in some configuration \(C\). To simulate one transition of \(M\), \(M'\) must:
 \begin{enumerate}[label=(\roman*)]
-  \item determine the \(k\) scanned symbols (the marked symbols, one per track),
-  \item apply \(M\)'s transition function in its finite control to obtain the \(k\) writes and head moves,
-  \item update the stacked tape to reflect these writes and moves.
+  \item locate, on each track, the unique marked symbol (these are the \(k\) scanned symbols of \(M\)),
+  \item apply \(M\)'s transition function in its finite control (possible because \(k\) is constant),
+  \item update the \(k\) written symbols and move each head marker left/right/stay accordingly.
 \end{enumerate}
 
-Because the \(k\) head markers may be at unrelated positions, \(M'\) locates them by sweeping across the active region.
-Let \(L\) be the maximum tape index visited by any head of \(M\) up to the current simulated step.
-Under the stacked encoding, all information needed to describe \(C\) lies in positions \(0,1,\dots,L\) of \(M'\)'s tape.
+Because the \(k\) head positions may be far apart, \(M'\) finds them by sweeping over the \emph{active} portion of its tape.
+Let \(L\) be the maximum tape index ever visited by any head of \(M\) up to the current time.
+Then the entire configuration \(C\) is represented within cells \(0,1,\dots,L\) of \(M'\)'s tape.
 
-\emph{Pass 1 (gather).}
-Starting at the left end, \(M'\) sweeps right from position \(0\) to position \(L\), recording in its state the \(k\) marked symbols it encounters (one per track).
-Since \(k\) is constant, this requires only constant additional finite-control information.
-At the end of the sweep, \(M'\) knows the \(k\)-tuple of scanned symbols and therefore knows which transition of \(M\) to simulate.
-
-\emph{Pass 2 (update).}
-\(M'\) sweeps back across \(0..L\), rewriting the marked cells with the new symbols and moving each mark one cell left/right/stay as prescribed.
-A move changes only a constant neighborhood around a mark, so each simulated step can be implemented with \(O(1)\) full sweeps of length \(O(L)\).
+A single simulated step can be done with a constant number of full sweeps over \(0..L\):
+one sweep to read the \(k\) marked symbols, and one sweep to perform the corresponding updates and move the markers.
 Therefore one step of \(M\) costs \(O(L)\) steps of \(M'\).
 
-\paragraph{Time bound.}
-After \(r\) simulated steps, each head of \(M\) has moved at most \(r\) times, so \(L=O(n+r)\).
-Thus simulating step \(r\) costs \(O(n+r)\) time, and the total time to simulate \(t(n)\) steps is
-\begin{align*}
-\sum_{r=1}^{t(n)} O(n+r)
-&= O\!\left(t(n)\,n + \sum_{r=1}^{t(n)} r\right)
-= O\!\left(t(n)\,n + t(n)^2\right).
-\end{align*}
-In particular, when \(t(n)\ge n\), this is \(O(t(n)^2)\), the standard quadratic slowdown.
+\paragraph{Running time bound.}
+After \(r\) simulated steps, each head of \(M\) has moved at most \(r\) times, hence \(L \le O(n+r)\).
+In particular, throughout the simulation of a \(t(n)\)-step computation, we have \(L=O(n+t(n))=O(t(n))\).
+Thus \(M'\) uses \(O(t(n))\) time to simulate each step of \(M\), and the total simulation time is
+\[
+O\!\left(\sum_{r=1}^{t(n)} L_r\right) \;=\; O\!\left(\sum_{r=1}^{t(n)} (n+r)\right) \;=\; O\!\left(t(n)^2 + n\,t(n)\right)
+\;=\; O\!\left(t(n)^2\right).
+\]
 
-\paragraph{Comparison with the ``side-by-side'' encoding.}
-In the standard proof of Theorem~2.1, the \(k\) simulated tapes are laid out next to each other with delimiters, so the encoded configuration has length proportional to \(\sum_{j=1}^k \ell_j\), where \(\ell_j\) is the active length of tape \(j\).
-In the stacked encoding, the configuration length is proportional to \(\max_j \ell_j\) instead.
-Since
-\(\max_j \ell_j \le \sum_j \ell_j \le k\max_j \ell_j\),
-both encodings yield the same asymptotic \(O(t(n)^2)\) simulation time, but the stacked encoding can improve constants by avoiding an explicit factor of \(k\) in the tape length.
-The tradeoff is precisely that the head markers are dispersed, so each simulated step still requires sweeping the full active region to collect the scanned symbols and then apply the updates.
-
-\paragraph{Conclusion.}
-The multi-track stacked representation yields a correct \gls{simulation} of any \gls{multitapetm} by a \gls{singletapetm} with at most quadratic time \gls{overhead}, giving an alternative proof of Theorem~2.1.
+\paragraph{Comparison with Theorem 2.1.}
+Theorem 2.1 shows that multitape machines can be simulated by a single-tape machine with at most quadratic slowdown.
+The stacked-track encoding yields the same asymptotic overhead as the standard ``strings side by side'' proof:
+the key cost is that, with one head, \(M'\) must sweep over the active region to coordinate \(k\) independent head positions.
+The difference is mainly representational (a constant-factor change in alphabet size and bookkeeping), not asymptotic.
