@@ -1,0 +1,127 @@
+\
+\subsection*{Problem 2.8.7}
+\addcontentsline{toc}{subsection}{Problem 2.8.7}
+
+\paragraph{Statement.}
+Suppose that we have a \gls{turingmachine} with an infinite \gls{twodtape} (blackboard?). There are now moves of the form \(\uparrow\) and \(\downarrow\), along with \(\leftarrow\) and \(\rightarrow\). The input is written initially to the right of the initial \gls{cursor} position.
+\begin{enumerate}[label=(\alph*)]
+\item Give a detailed definition of the \gls{transitionfunction} of such a machine. What is a \gls{configuration}?
+\item Show that such a machine can be simulated by a 3-string \gls{turingmachine} with a quadratic loss of efficiency.
+\end{enumerate}
+
+\paragraph{Solution.}
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Formal model and transition function.}
+A two-dimensional \gls{turingmachine} \(M\) is specified by
+\(
+M=(Q,\Sigma,\Gamma,\delta,s,\textsf{yes},\textsf{no})
+\),
+where \(Q\) is a finite set of states, \(\Sigma\subseteq\Gamma\) is the input alphabet, \(\Gamma\) is the tape alphabet
+(with a designated blank symbol \(u\in\Gamma\)), \(s\in Q\) is the start state, and \(\textsf{yes},\textsf{no}\in Q\) are
+halting accept/reject states. The \gls{twodtape} is indexed by \(\mathbb{Z}\times\mathbb{Z}\).
+A tape \emph{content} is a function
+\(
+T:\mathbb{Z}\times\mathbb{Z}\to\Gamma
+\)
+such that \(T(i,j)=u\) for all but finitely many \((i,j)\) (finite nonblank convention). The head position (the \gls{cursor})
+is a pair \((x,y)\in\mathbb{Z}\times\mathbb{Z}\).
+
+The \gls{transitionfunction} is
+\begin{equation}\label{eq:delta-2d}
+\delta:(Q\setminus\{\textsf{yes},\textsf{no}\})\times \Gamma \;\to\; Q\times \Gamma \times \{\leftarrow,\rightarrow,\uparrow,\downarrow\}.
+\end{equation}
+If the machine is in state \(q\in Q\setminus\{\textsf{yes},\textsf{no}\}\) and the head scans symbol \(a=T(x,y)\),
+then \(\delta(q,a)=(q',b,D)\) prescribes:
+\begin{itemize}
+\item write \(b\) in the current cell, i.e., set \(T(x,y)\leftarrow b\);
+\item update the state to \(q'\);
+\item move the head one step according to \(D\):
+\(
+(x,y)\leftarrow (x-1,y)\) if \(D=\leftarrow\);
+\(
+(x,y)\leftarrow (x+1,y)\) if \(D=\rightarrow\);
+\(
+(x,y)\leftarrow (x,y+1)\) if \(D=\uparrow\);
+\(
+(x,y)\leftarrow (x,y-1)\) if \(D=\downarrow\).
+\end{itemize}
+The input \(w=w_1\cdots w_n\in\Sigma^*\) is placed initially along the \(x\)-axis to the right of the origin:
+\(T(i,0)=w_i\) for \(i=1,\dots,n\), all other cells are blank \(u\), and the initial head position is \((0,0)\) in state \(s\).
+
+A \gls{configuration} (instantaneous description) is a triple
+\begin{equation}\label{eq:config-2d}
+C=(q,T,(x,y)),
+\end{equation}
+consisting of the current state \(q\), the full tape function \(T\), and the head coordinates \((x,y)\).
+
+\item \textbf{Simulation by a 3-string machine with quadratic slowdown.}
+Let \(M\) be any two-dimensional machine that halts within \(t=t(n)\) steps on inputs of length \(n\).
+We build a 3-string \gls{turingmachine} \(M'\) that simulates \(M\) in \(O(t^2)\) time.
+
+\paragraph{Bounding the active region.}
+In \(t\) steps, the head of \(M\) moves at most \(t\) times in each coordinate, hence it never leaves the square
+\(
+[-t,t]\times[-t,t].
+\)
+Therefore, during a \(t\)-step computation, only \(O(t^2)\) cells can possibly be visited or modified.
+
+\paragraph{A fixed-grid encoding on one tape.}
+Choose a side length \(m\) that is a power of two and satisfies \(m\ge 2t+1\).
+Encode the \(m\times m\) square centered at the origin on tape 1 of \(M'\) as a flattened grid:
+\begin{equation}\label{eq:flatten}
+\text{row }(m-1)\ \#\ \text{row }(m-2)\ \#\ \cdots\ \#\ \text{row }0,
+\end{equation}
+where each row is a block of exactly \(m\) symbols from \(\Gamma\), and \(\#\notin\Gamma\) is a delimiter.
+One cell in the grid is marked to indicate the simulated head position: use a marked copy \(\widehat{\Gamma}=\{\widehat{a}:a\in\Gamma\}\),
+and the unique marked symbol in the encoding indicates the current head cell and its scanned symbol.
+
+Tape 2 stores \(m\) in unary (as \(1^m\)) so that moving up/down by one row can be implemented by counting \(m\) steps.
+Tape 3 is a work tape used for copying during grid expansions (described below).
+
+\paragraph{A schematic picture.}
+\begin{center}
+\begin{tikzpicture}[scale=0.95]
+  \draw (0,0) grid (4,4);
+  \node at (2,4.5) {2D tape (local view)};
+  \fill (2.5,1.5) circle (2pt);
+  \node[anchor=west] at (4.2,1.5) {head at \((x,y)\)};
+
+  \draw[-Latex] (4.9,2) -- (6.2,2);
+
+  \node[anchor=west] at (6.3,4.2) {tape 1 encoding (rows with \(\#\) delimiters)};
+  \draw (6.3,3.5) rectangle (12.3,4.0);
+  \node[anchor=west] at (6.4,3.75) {$r_3\ \#\ r_2\ \#\ r_1\ \#\ r_0$};
+\end{tikzpicture}
+\end{center}
+
+\paragraph{Simulating one transition.}
+Assume tape 1's head is positioned on the unique marked symbol (the simulated head cell). If \(M\) is in state \(q\) and the marked cell
+carries \(\widehat{a}\), then \(M'\) computes \(\delta(q,a)=(q',b,D)\) in its finite control, replaces \(\widehat{a}\) by \(b\),
+and then moves the mark according to \(D\):
+\begin{itemize}
+\item If \(D\in\{\leftarrow,\rightarrow\}\), move one symbol left/right within the current row (if a delimiter \(\#\) is encountered, a resize is triggered).
+\item If \(D=\uparrow\), move left by \(m+1\) positions on tape 1 (crossing exactly one delimiter \(\#\)), using the unary counter \(1^m\) on tape 2 to count \(m\) steps, plus one step to cross \(\#\).
+\item If \(D=\downarrow\), move right by \(m+1\) positions analogously.
+\end{itemize}
+When the new cell is reached, \(M'\) marks it by replacing its symbol \(c\in\Gamma\) with \(\widehat{c}\).
+
+\paragraph{Cost per simulated step.}
+Left/right moves cost \(O(1)\) tape-head moves. Up/down moves cost \(O(m)\) tape-head moves to traverse one row-length.
+Thus each simulated step costs \(O(m)\) time.
+
+\paragraph{Handling boundary growth by doubling.}
+If a move would leave the represented \(m\times m\) grid, \(M'\) doubles the grid size:
+rebuild tape 1 into a \(2m\times 2m\) blank grid and copy the old \(m\times m\) contents into the centered sub-square,
+preserving the marked head cell. This rebuild is done by a linear scan/copy using tape 3 as scratch and takes \(O(m^2)\) time.
+Tape 2 is updated from \(1^m\) to \(1^{2m}\) in \(O(m)\) time.
+
+Because \(m\) doubles, at most \(\lceil \log_2(2t+1)\rceil\) rebuilds occur in a \(t\)-step computation.
+
+\paragraph{Total running time.}
+Throughout the simulation, \(m=O(t)\). Simulating \(t\) steps costs \(t\cdot O(m)=O(t^2)\).
+The rebuild costs form a geometric series
+\(
+O(1^2)+O(2^2)+O(4^2)+\cdots+O(t^2)=O(t^2),
+\)
+so they do not change the asymptotic bound. Therefore the overall simulation runs in \(O(t^2)\) time, i.e., a quadratic loss of efficiency.
+\end{enumerate}
