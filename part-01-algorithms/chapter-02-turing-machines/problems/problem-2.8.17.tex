@@ -1,0 +1,56 @@
+% problem-2.8.17.tex
+\subsection*{Problem 2.8.17}
+\addcontentsline{toc}{subsection}{Problem 2.8.17}
+
+\paragraph{Statement.}
+Show that any language decided by a \gls{kstringntm} within time \(f(n)\) can be decided by a \gls{twostringntm} also within time \(f(n)\).
+(Discovering the simple solution is an excellent exercise for understanding \gls{nondeterminism}. Compare with Theorem~2.1 and Problem~2.8.9 for deterministic machines.)
+
+Needless to say, any \gls{kstringntm} can be simulated by a \gls{singlestringntm} with a quadratic loss of efficiency, exactly as with deterministic machines.
+
+\paragraph{Solution.}
+Let \(M\) be a \gls{kstringntm} deciding \(L\) in time \(t=f(n)\) on inputs of length \(n\).
+Write \(k\) for the number of work strings (besides the read-only input string).
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{From \(k\) strings to \(2\) strings in the same time bound (up to a constant factor).}
+
+The key point is that \emph{time-bounded nondeterminism is about the existence of an accepting computation path of length \(\le t\)}.
+A \gls{twostringntm} can therefore proceed by \emph{guessing} such a path and verifying it step-by-step while maintaining only a constant amount of additional bookkeeping per simulated step.
+
+Formally, define the \gls{instantaneousdescription} (configuration) of \(M\) at any moment to consist of:
+(i) the control state,
+(ii) the input-head position,
+(iii) for each of the \(k\) work strings: its head position and the symbol stored in each work cell ever visited so far.
+Because \(M\) runs for at most \(t\) steps, across the entire computation it can visit at most \(t\) new work cells \emph{per string}, hence at most \(kt\) distinct work cells in total.
+
+Construct a \gls{twostringntm} \(M_2\) that operates as follows on input \(x\) of length \(n\):
+
+\begin{enumerate}[label=\arabic*.]
+\item Initialize an encoding of the current configuration of \(M\) on work string~\#1 (the second string of \(M_2\)); initially all work strings are blank and all work heads are at their start cells.
+Also initialize a step counter \(s:=0\) (in binary) as part of the same encoding.
+\item Repeat while \(s<t\):
+\begin{enumerate}[label=(\roman*)]
+\item From the encoding, read the current control state of \(M\), the input-head position, and the \(k\) symbols currently scanned by the \(k\) work heads.
+\item Nondeterministically choose one transition of \(M\) consistent with these scanned symbols (this is exactly where \gls{nondeterminism} is used).
+\item Update the configuration encoding accordingly: change the control state; update the input-head position; and for each work string, update the scanned symbol (write) and head move (\(\leftarrow,\rightarrow,\text{stay}\)).
+If a work head moves onto a work cell not yet represented in the encoding, extend the encoding by adding that cell as blank.
+\item If the simulated state is accepting, \textbf{accept}.
+\item Increment \(s\).
+\end{enumerate}
+\item If the loop finishes without accepting, \textbf{reject}.
+\end{enumerate}
+
+\emph{Correctness.}
+If \(x\in L\), then \(M\) has an accepting computation path of length \(\le t\); along that path, the nondeterministic choices of \(M_2\) can select exactly the same transitions, and all updates are consistent by construction, so \(M_2\) accepts.
+If \(x\notin L\), then no accepting computation path of length \(\le t\) exists, hence every sequence of nondeterministic choices yields either a rejecting/halting path or fails to reach an accepting state within \(t\) steps, so \(M_2\) rejects.
+
+\emph{Running time.}
+Each simulated step performs only constant local updates to the configuration encoding plus counter maintenance, and \(k\) is a constant of the machine model.
+Thus the simulation runs in \(O(t)\) time; by standard constant-factor normalization of the time measure (absorbing fixed overhead into \(f\)), this is ``within time \(f(n)\)'' as required. See also \cite{sipser2013} for robustness of time-bounded nondeterministic models.
+
+\item \textbf{From \(k\) strings to \(1\) string: quadratic slowdown.}
+
+By Theorem~2.1 (the standard single-string simulation of a multi-string machine), any \gls{twostringntm} running in time \(t\) can be simulated by a \gls{singlestringntm} in time \(O(t^2)\).
+Applying this to the machine \(M_2\) from part (a) yields a single-string nondeterministic machine deciding \(L\) in time \(O(f(n)^2)\), exactly as in the deterministic case.
+\end{enumerate}

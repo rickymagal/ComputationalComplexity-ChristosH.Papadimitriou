@@ -1,0 +1,62 @@
+\subsection*{Problem 2.8.9}
+\addcontentsline{toc}{subsection}{Problem 2.8.9}
+
+\paragraph{Statement.}
+Show that any \gls{multitapetm} operating within time \(f(n)\) can be simulated by a 2-string \gls{turingmachine} within time \(f(n)\log f(n)\).
+(This is a clever simulation, from \cite{hennie1966twotape}.
+The trick is to keep all strings on top of one another in a single string---that is, a single symbol will encode \(k\), as in Problem 2.8.6 above---so that the locations of all cursors coincide; the strings are unbounded in both directions, say.
+Cursor motions are simulated by moving blocks of symbols around, into spaces that were intentionally written sparsely; the sizes of the blocks form a geometric progression.
+The second string is only used for \emph{fast copying}.)
+This result is a useful substitute for Theorem 2.1, when a \gls{turingmachine} with a fixed number of strings has to be constructed, as it achieves better time bounds.
+
+\paragraph{Solution.}
+Let \(M\) be a \gls{multitapetm} with a fixed number \(k\) of work tapes, running in time \(t=f(n)\) on inputs of length \(n\).
+We describe a 2-string \gls{turingmachine} \(M'\) that simulates \(M\) in \(O(t\log t)\) time.
+The construction is based on the classical two-tape simulation of multitape machines by Hennie and Stearns \cite{hennie1966twotape}; see also \cite{sipser2012introduction}.
+
+\subsubsection*{1) Goal: align all heads at one physical position}
+We encode all \(k\) simulated tapes on top of each other on tape 1 of \(M'\): one tape-1 cell encodes a \(k\)-tuple of symbols, one per simulated tape.
+We maintain the invariant that the \(k\) simulated head positions always correspond to the same tape-1 cell of \(M'\) (the ``shared cursor'').
+Thus reading the \(k\) scanned symbols is constant-time (up to fixed \(k\)) and applying \(M\)'s transition is done in the finite control.
+
+The difficulty is simulating independent head moves when all heads are forced to coincide. This is handled by representing, for each simulated tape, the tape content as two strings split at the head (left-of-head and right-of-head), and maintaining these strings in a sparse block layout that supports efficient shifts.
+
+\subsubsection*{2) Sparse block layout with geometric block sizes}
+Fix a block hierarchy of sizes \(1,2,4,8,\dots,2^m\), where \(m=\lceil \log_2 t\rceil\).
+For each simulated tape \(i\), we maintain two sequences of blocks on tape 1:
+\begin{itemize}
+\item a left stack encoding the symbols to the left of the head (in reverse order), and
+\item a right stack encoding the symbol under the head and those to its right (in forward order).
+\end{itemize}
+Each stack is partitioned into consecutive blocks whose sizes follow the geometric progression \(1,2,4,\dots\), where each block of size \(2^j\) is stored with padding (blank gaps) so it can be shifted or rebuilt locally without immediately colliding with neighboring blocks.
+Intuitively, the layout is ``mostly blank''; actual symbols occupy only a sparse subset of cells, leaving room to move blocks around.
+
+Tape 2 is used only as a work tape for copying/rebuilding blocks quickly (``fast copying'').
+
+\subsubsection*{3) Simulating a move by local rebalancing}
+A single simulated head move for tape \(i\) corresponds to popping one symbol from one stack and pushing it onto the other:
+\begin{itemize}
+\item move right: pop the head symbol from the right stack and push it onto the left stack;
+\item move left: pop the top symbol from the left stack and push it onto the right stack.
+\end{itemize}
+If the needed symbol is present in the top (small) blocks, this is done by constant local edits near the shared cursor.
+
+When a small block becomes empty (or overfull), we rebalance by merging/splitting blocks at increasing sizes, exactly like carrying in binary.
+For example, if the size-\(2^0\) block on the right stack is empty, we rebuild it by taking one symbol from the size-\(2^1\) block; if that is empty too, we go to size-\(2^2\), and so on.
+A rebuild at level \(j\) involves moving \(\Theta(2^j)\) symbols, which costs \(\Theta(2^j)\) time on tape 1, but it happens only after \(\Theta(2^j)\) simulated moves affecting that stack, so its \gls{amortizedanalysis} cost is \(O(1)\) per move for that level.
+
+\subsubsection*{4) Time bound: \(O(t\log t)\)}
+Each simulated step of \(M\) performs:
+\begin{itemize}
+\item a constant amount of finite-control work to compute the transition, and
+\item up to \(k\) head moves, each implemented by rebalancing in one stack hierarchy.
+\end{itemize}
+For a fixed tape \(i\), the stack hierarchy has \(m+1=O(\log t)\) levels.
+At each level \(j\), rebuilding a block costs \(\Theta(2^j)\) but can be charged to \(\Theta(2^j)\) preceding moves that created the imbalance.
+Thus each level contributes \(O(1)\) amortized cost per simulated move, and summing over all levels yields \(O(\log t)\) amortized time per simulated step.
+Since \(k\) is fixed, the constant factor does not affect asymptotics.
+
+Therefore the total simulation time is \(O(t\log t)=O(f(n)\log f(n))\), as required.
+
+\subsubsection*{5) Conclusion}
+A \gls{multitapetm} running in time \(f(n)\) can be simulated by a 2-string \gls{turingmachine} within time \(O(f(n)\log f(n))\), using sparse geometric blocks on one string and the second string for fast copying, as in \cite{hennie1966twotape}.

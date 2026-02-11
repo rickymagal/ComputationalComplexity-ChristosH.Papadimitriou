@@ -1,0 +1,63 @@
+% problem-2.8.13.tex
+\subsection*{Problem 2.8.13}
+\addcontentsline{toc}{subsection}{Problem 2.8.13}
+
+\paragraph{Statement.}
+Show that the language of \glspl{palindrome} cannot be decided in less than \(\log n\) space.
+(The argument is a hybrid between Problems 2.8.5 and 2.8.12.)
+
+\paragraph{Solution.}
+Let \(\Sigma=\{0,1\}\) and let
+\[
+\mathrm{PAL}=\{\,w\in\Sigma^* : w = w^R\,\}
+\]
+be the language of \glspl{palindrome}, where \(w^R\) is the reversal of \(w\).
+We show that any deterministic \gls{turingmachine} deciding \(\mathrm{PAL}\) must use \(\Omega(\log n)\) work space on some inputs of length \(n\).
+
+\subsubsection*{1) Exponentially many distinguishable prefixes}
+Consider the \gls{myhillnerode} equivalence for a language \(L\subseteq\Sigma^*\):
+\[
+x \equiv_L y \quad \Longleftrightarrow \quad \forall z\in\Sigma^*,\; xz\in L \Leftrightarrow yz\in L.
+\]
+Fix \(m\ge 1\). For each \(x\in\Sigma^m\), define the suffix \(z_x = x^R\) (also length \(m\)).
+Then \(xz_x = xx^R\in \mathrm{PAL}\).
+If \(y\in\Sigma^m\) and \(y\ne x\), then \(yz_x = yx^R \notin \mathrm{PAL}\) (because \(yx^R\) is a palindrome iff \(y=x\)).
+Hence \(x \not\equiv_{\mathrm{PAL}} y\) whenever \(x\ne y\).
+Therefore \(\equiv_{\mathrm{PAL}}\) has at least \(2^m\) distinct \glspl{equivalenceclass} among length-\(m\) prefixes.
+
+\subsubsection*{2) A space-\(S\) decider yields at most \(2^{2^{O(S)}}\) prefix types}
+Let \(M\) be a deterministic \gls{turingmachine} deciding some language \(L\) and using at most \(S\) work-tape cells on all inputs of length \(2m\).
+As in Problem 2.8.12, define an \gls{extendedstate} at space bound \(S\) to include:
+the control state, the contents of the bounded work area of all work tapes, and the work-head positions.
+Let \(N(S)\) be the number of such extended states. Then \(N(S)=2^{O(S)}\).
+
+Fix a boundary immediately to the right of a prefix \(x\in\Sigma^m\).
+Define the \emph{boundary behavior} of \(x\) at space bound \(S\) as the function
+\[
+B_x : \{1,\dots,N(S)\}\to \{1,\dots,N(S)\}\cup\{\mathrm{HALT}\}
+\]
+defined as follows: start \(M\) with the input head at the boundary and with extended state \(\sigma\), and run \(M\) until the first time the input head returns to the boundary and is about to move to the right; if this happens, output the resulting extended state \(\sigma'\), otherwise output \(\mathrm{HALT}\).
+This depends only on \(x\), because we stop at the first attempted move from the boundary into the suffix.
+
+Key implication (the same mechanism behind the two-way-to-one-way reduction): if \(B_x = B_y\), then \(x \equiv_L y\).
+Intuitively, from the perspective of the suffix, the prefix is a finite-state transducer on extended states at the boundary; if two prefixes induce the same transducer, then substituting one for the other cannot change accept/reject on any continuation.
+
+Hence the number of \(\equiv_L\)-classes among length-\(m\) prefixes is at most the number of possible behaviors \(B_x\).
+But \(B_x\) is a function on a domain of size \(N(S)\), so the total number of behaviors is at most
+\[
+(N(S)+1)^{N(S)} \;=\; 2^{O(N(S)\log N(S))} \;=\; 2^{2^{O(S)}}.
+\]
+
+\subsubsection*{3) Conclude the \(\Omega(\log n)\) lower bound}
+Apply the previous bound to \(L=\mathrm{PAL}\).
+Part 1 gives at least \(2^m\) distinct \(\equiv_{\mathrm{PAL}}\)-classes among length-\(m\) prefixes.
+Part 2 gives at most \(2^{2^{O(S)}}\) such classes for any decider using space \(S\) on length \(2m\) inputs.
+Therefore
+\[
+2^m \;\le\; 2^{2^{O(S)}}.
+\]
+Taking \(\log_2\) twice yields \(O(S)\ge \log_2 m - O(1)\), i.e. \(S=\Omega(\log m)\).
+Since \(n=2m\), we obtain \(S=\Omega(\log n)\).
+
+Thus the language of \glspl{palindrome} cannot be decided in space \(o(\log n)\).
+(For background on \gls{myhillnerode} and related equivalences, see \cite{sipser2012introduction}.)

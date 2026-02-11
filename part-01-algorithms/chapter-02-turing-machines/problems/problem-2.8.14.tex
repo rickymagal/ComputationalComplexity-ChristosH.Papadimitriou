@@ -1,0 +1,109 @@
+% problem-2.8.14.tex
+\subsection*{Problem 2.8.14}
+\addcontentsline{toc}{subsection}{Problem 2.8.14}
+
+\paragraph{Statement.}
+Give a detailed proof of Theorem 2.3.
+That is, give an explicit mathematical construction of the simulating machine in terms of the simulated machine
+(assume the latter has one string, besides the input string).
+
+\paragraph{Solution.}
+We recall the theorem (as stated in the book \cite{papadimitriou}):
+
+\begin{quote}
+\textbf{Theorem 2.3.} Let \(L\) be a language in \(\mathrm{SPACE}(f(n))\). Then, for any \(\varepsilon>0\),
+\(L \in \mathrm{SPACE}(2+\varepsilon f(n))\).
+\end{quote}
+
+We give an explicit \gls{spacecompression} construction for the case in which the original decider has a read-only input string and a single work string.
+
+\subsubsection*{Model}
+Let \(M=(Q,\Sigma,\Gamma,\delta,s,\mathrm{yes},\mathrm{no})\) be a deterministic \gls{turingmachine} with:
+\begin{itemize}
+\item a read-only input tape over \(\Sigma\), and
+\item one read/write work tape over \(\Gamma\), with a distinguished blank symbol in \(\Gamma\).
+\end{itemize}
+Let \(f:\mathbb{N}\to\mathbb{N}\). Assume that on every input \(x\) of length \(n\), during its computation \(M\) scans at most \(f(n)\) distinct work-tape cells.
+
+Fix \(\varepsilon>0\). We construct a machine \(M_{\varepsilon}\) that decides the same language as \(M\) and, on all inputs of length \(n\), scans at most \(2+\varepsilon f(n)\) work-tape cells.
+
+\subsubsection*{Construction: pack blocks of work symbols}
+Let \(b=\left\lceil \dfrac{1}{\varepsilon}\right\rceil\). Then \(1/b \le \varepsilon\).
+
+The idea is to store \(b\) consecutive work-tape cells of \(M\) inside a single work-tape cell of \(M_{\varepsilon}\).
+Define the packed alphabet \(\Gamma'=\Gamma^b\).
+A symbol of \(\Gamma'\) is a \(b\)-tuple \(T=(T[0],\dots,T[b-1])\) of symbols in \(\Gamma\).
+
+\paragraph{Work-tape encoding.}
+Fix an input \(x\) of length \(n\).
+At any time, let the work tape of \(M\) (restricted to the \(f(n)\) scanned cells) be the string
+\[
+w = w_0 w_1 \cdots w_{f(n)-1}\in \Gamma^{f(n)}.
+\]
+We encode \(w\) as a string \(W\in(\Gamma')^*\) on the single work tape of \(M_{\varepsilon}\) by grouping into blocks:
+for each block index \(j\ge 0\),
+\[
+W[j] \;=\; \bigl(w_{jb+0},\; w_{jb+1},\; \dots,\; w_{jb+(b-1)}\bigr),
+\]
+where missing positions beyond \(f(n)-1\) are padded with blanks.
+Thus \(\lvert W\rvert = \left\lceil \dfrac{f(n)}{b}\right\rceil\) packed cells suffice.
+
+\paragraph{Head position encoding.}
+If \(M\)'s work head is currently at position \(i\in\{0,\dots,f(n)-1\}\), write \(i=jb+r\) with \(0\le r<b\).
+Then \(M_{\varepsilon}\)'s work head points to packed cell \(j\), and the offset \(r\) is stored in the finite control.
+Concretely, the state set of \(M_{\varepsilon}\) is \(Q\times\{0,1,\dots,b-1\}\), plus accepting/rejecting states.
+
+\subsubsection*{Explicit transition function of \(M_{\varepsilon}\)}
+Let the current state of \(M_{\varepsilon}\) be \((q,r)\), where \(q\in Q\) is the simulated state of \(M\) and \(r\) is the offset.
+Let the current input symbol be \(a\in\Sigma\cup\{\text{blank}\}\).
+Let the current packed work symbol be \(T=(T[0],\dots,T[b-1])\in\Gamma'\), so the simulated work symbol is \(T[r]\).
+
+Assume \(\delta\) has the form
+\[
+\delta(q,a,T[r]) \;=\; (q',a',\gamma',D_{\mathrm{in}},D_{\mathrm{wk}}),
+\]
+where \(D_{\mathrm{in}},D_{\mathrm{wk}}\in\{\leftarrow,\rightarrow,\text{stay}\}\) are the input/work head moves.
+
+Then \(M_{\varepsilon}\) performs:
+\begin{enumerate}
+\item \textbf{Write on the packed work tape.}
+Let
+\[
+T'=(T[0],\dots,T[r-1],\gamma',T[r+1],\dots,T[b-1]).
+\]
+Write \(T'\) in the current packed work cell.
+\item \textbf{Move the input head.} Move according to \(D_{\mathrm{in}}\).
+\item \textbf{Update \((q,r)\) and move the packed work head.}
+\begin{itemize}
+\item If \(D_{\mathrm{wk}}=\text{stay}\): keep \(r\) and do not move the packed work head.
+\item If \(D_{\mathrm{wk}}=\rightarrow\):
+  \begin{itemize}
+  \item if \(r<b-1\), set \(r:=r+1\) (packed head stays);
+  \item if \(r=b-1\), set \(r:=0\) and move the packed head right by one cell.
+  \end{itemize}
+\item If \(D_{\mathrm{wk}}=\leftarrow\):
+  \begin{itemize}
+  \item if \(r>0\), set \(r:=r-1\) (packed head stays);
+  \item if \(r=0\), set \(r:=b-1\) and move the packed head left by one cell.
+  \end{itemize}
+\end{itemize}
+\item \textbf{Update the simulated control state.} Set \(q:=q'\).
+Map \(q'=\mathrm{yes}\) and \(q'=\mathrm{no}\) to the corresponding halting states of \(M_{\varepsilon}\).
+\end{enumerate}
+
+This defines the transition function of \(M_{\varepsilon}\) purely in terms of \(\delta\).
+Correctness follows by induction on the number of simulated steps: the packed tape and the offset encode exactly the work tape and work-head position of \(M\), and the update rule applies exactly the same local rewrite and head movement as \(\delta\).
+
+\subsubsection*{Space bound}
+On inputs of length \(n\), \(M\) scans at most \(f(n)\) work cells.
+The encoding uses at most \(\left\lceil f(n)/b\right\rceil\) packed cells.
+Reserve a constant number of extra packed cells for bookkeeping; absorb this into \(2\).
+
+Using \(\lceil u\rceil \le u+1\) and \(1/b\le \varepsilon\),
+\[
+\left\lceil \frac{f(n)}{b}\right\rceil \;\le\; \frac{f(n)}{b} + 1 \;\le\; \varepsilon f(n) + 1.
+\]
+Hence \(M_{\varepsilon}\) scans at most \(2+\varepsilon f(n)\) packed work cells on inputs of length \(n\), proving Theorem 2.3 in the one-work-tape case.
+
+\subsubsection*{Remark}
+If the original machine has a constant number of work tapes, one can first combine them into one tape using tracks (a constant-factor blowup) and then apply the same packing argument, preserving the statement \( \mathrm{SPACE}(f(n)) \subseteq \mathrm{SPACE}(2+\varepsilon f(n))\).

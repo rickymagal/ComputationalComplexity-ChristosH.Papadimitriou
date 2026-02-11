@@ -1,0 +1,70 @@
+\subsection*{Problem 2.8.16}
+\addcontentsline{toc}{subsection}{Problem 2.8.16}
+
+\paragraph{Statement.}
+Modify the \gls{ndtm} for \gls{reachabilityproblem} in Example 2.10 so that it uses the same amount of space, but always halts.
+
+It turns out that all \gls{spacebounded} machines, even those that use very little space and that they cannot count steps, can be modified so that they always halt; for the tricky construction see \cite{sipser1980halting}.
+
+\paragraph{Solution.}
+We describe the standard ``clocking by configuration bound'' modification, specialized to the \gls{reachabilityproblem} machine of Example 2.10.
+
+\subsubsection*{1) The nondeterministic reachability machine and why it may not halt}
+In Example 2.10, the \gls{ndtm} decides \gls{reachabilityproblem} (reachability in a \gls{configurationgraph}) by simulating a walk in the graph:
+it starts from the source \gls{configuration} \(c_s\), repeatedly nondeterministically chooses a legal successor configuration, updates the current configuration, and accepts if it ever reaches the target configuration \(c_t\).
+If \(c_t\) is not reachable from \(c_s\), some computation branches may loop forever by cycling among configurations.
+
+\subsubsection*{2) Key observation: a space bound implies finitely many configurations}
+Fix an input instance of length \(n\) and suppose the simulated machine is guaranteed to use at most \(S\) work cells on inputs of length \(n\).
+A full \gls{configuration} of the simulated machine can be encoded using:
+\begin{itemize}
+\item \(O(1)\) bits for the finite control state,
+\item \(O(\log n)\) bits for the input-head position, and
+\item \(O(S)\) bits for the work tape contents and work-head position(s).
+\end{itemize}
+Hence the number of distinct configurations that can ever appear under the space bound \(S\) is at most
+\begin{equation}\label{eq:config-bound}
+N \;\le\; 2^{O(S+\log n)} \;=\; n^{O(1)}\cdot 2^{O(S)}.
+\end{equation}
+In particular, if \(S\ge \log n\) (the usual regime for nontrivial space bounds), then \(\log N = O(S)\).
+
+\subsubsection*{3) There is always a short accepting path if any path exists}
+If \(c_t\) is reachable from \(c_s\) in the \gls{configurationgraph}, then there exists a \gls{simplepath} from \(c_s\) to \(c_t\) that never repeats a configuration.
+Such a path has length strictly less than \(N\), because it visits at most one new configuration per step and there are at most \(N\) configurations.
+
+\subsubsection*{4) The halting modification}
+We modify the reachability \gls{ndtm} as follows.
+On input of length \(n\) with space bound \(S\), let \(N(n,S)\) be a fixed explicit upper bound satisfying \eqref{eq:config-bound}
+(for example \(N(n,S)=2^{c(S+\lceil\log n\rceil)}\) for a large enough constant \(c\) determined by the encoding).
+
+The new machine \(M'\) maintains:
+\begin{itemize}
+\item the current simulated configuration \(c\) (as in Example 2.10), and
+\item a counter \(T\) initialized to \(N(n,S)\), stored in binary.
+\end{itemize}
+Then \(M'\) repeats:
+\begin{enumerate}
+\item If \(c=c_t\), \textbf{accept}.
+\item If \(T=0\), \textbf{reject}.
+\item Otherwise, nondeterministically choose a legal successor configuration \(c'\) of \(c\), set \(c:=c'\), and decrement \(T\).
+\end{enumerate}
+This machine halts on every branch after at most \(N(n,S)+1\) iterations.
+
+\subsubsection*{5) Space usage}
+Relative to the machine in Example 2.10, the only additional work tape storage is the counter \(T\), which needs \(O(\log N)\) bits.
+By \eqref{eq:config-bound},
+\(
+\log N = O(S+\log n).
+\)
+In the standard setting where the reachability simulation already stores a full configuration (including an input-head position) and \(S\ge \log n\), this is \(O(S)\) extra bits, i.e., only a constant-factor increase and the same asymptotic space bound.
+If \(S<\log n\), then either the model for the simulated configuration already forces an \(O(\log n)\) term, or the computation collapses to constant space (cf.\ Problem 2.8.12), in which case halting can be enforced by an absolute constant-space wrapper; in all cases, the modification does not increase the space bound beyond that of the original reachability construction.
+
+\subsubsection*{6) Correctness}
+\begin{itemize}
+\item If \(c_t\) is reachable from \(c_s\), then there exists a simple path of length \(<N\).
+The nondeterministic choices can follow this path, so some branch reaches \(c_t\) before the counter expires and accepts.
+\item If \(c_t\) is not reachable from \(c_s\), then no branch can ever reach \(c_t\).
+Every branch either exhausts the counter and rejects, or would otherwise loop; but looping is prevented by the counter, so all branches reject.
+\end{itemize}
+
+Thus \(M'\) decides \gls{reachabilityproblem}, always halts, and uses the same asymptotic amount of space as the machine in Example 2.10.

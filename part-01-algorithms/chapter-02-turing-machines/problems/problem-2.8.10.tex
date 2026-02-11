@@ -1,0 +1,68 @@
+\subsection*{Problem 2.8.10}
+\addcontentsline{toc}{subsection}{Problem 2.8.10}
+
+\paragraph{Statement.}
+Call a \gls{turingmachine} \(M\) \gls{obliviousTM} if the position of its \glspl{cursor} at the \(t\)-th step of its computation on input \(x\) depends only on \(t\) and \(\lvert x\rvert\), not \(x\) itself.
+Problem: Show that the simulating two-string machine above can be made oblivious.
+(Oblivious machines are useful because they are closer to more ``static'' models of computation, such as \glspl{booleancircuit}; see Problem 1.5.22.)
+
+\paragraph{Solution.}
+We refer to the 2-string simulation from Problem 2.8.9 (Hennie--Stearns style \cite{hennie1966twotape}) that simulates a fixed-\(k\) multitape machine \(M\) running in time \(t=f(n)\) by a 2-string machine \(M'\) in time \(O(t\log t)\).
+We show how to modify \(M'\) so that its head trajectories depend only on the simulated time step and the input length, i.e., \(M'\) becomes \gls{obliviousTM}, without changing the \(O(t\log t)\) bound by more than a constant factor.
+
+\subsubsection*{1) What needs to be made input-independent}
+In the simulation of Problem 2.8.9, tape 1 stores a sparse, geometric block representation of the \(k\) simulated tapes around a shared cursor.
+The simulator performs:
+\begin{itemize}
+\item a \emph{local update} near the shared cursor to apply \(M\)'s transition, and
+\item occasional \emph{rebalancing / rebuilding} of blocks of size \(2^j\) when a small block underflows/overflows (triggered by the simulated head motions).
+\end{itemize}
+Local updates already happen at the shared cursor, so they do not require data-dependent long travel.
+The non-obliviousness arises because the times at which block rebuilds are triggered depend on the actual simulated head motions, which depend on the input.
+
+The fix is to \emph{schedule all possible rebuilds in advance}, often enough to handle the worst case, and execute them even if they are not strictly necessary.
+Since we schedule for the worst case, the simulator remains correct for every input, and the schedule depends only on \(t\) (hence on \(n\)) and on the step counter.
+
+\subsubsection*{2) Deterministic rebuild schedule}
+Let the simulated machine \(M\) run for at most \(t\) steps.
+As in Problem 2.8.9, maintain geometric block levels \(j=0,1,\dots,m\), where \(m=\lceil \log_2 t\rceil\).
+A level-\(j\) rebuild touches \(\Theta(2^j)\) symbols per simulated tape and costs \(O(2^j)\) time on the simulating machine (using the second tape for copying).
+
+Define a fixed schedule over the \(t\) simulated steps:
+\begin{quote}
+At simulated step \(r\in\{1,\dots,t\}\), perform a rebuild at level \(j\) for every \(j\) such that \(2^j \mid r\).
+\end{quote}
+Equivalently, in step \(r\) we rebuild exactly those levels \(j\) corresponding to the trailing zeros of \(r\) in binary; this depends only on \(r\), not on the input.
+
+\paragraph{Why this schedule is sufficient.}
+In \(2^j\) simulated steps, each simulated head can move at most \(2^j\) positions.
+Thus, regardless of the input, the amount of mass (symbols) that must flow between the level-\(j\) and level-\((j{+}1)\) representations is bounded by \(O(2^j)\) over any interval of length \(2^j\).
+Rebuilding level \(j\) at least once every \(2^j\) simulated steps is therefore enough to keep the level-\(j\) invariant valid in the worst case.
+If the simulated heads happened to move less, the rebuild simply reconstructs the same blocks (a no-op on the represented strings), but still follows the same head trajectory.
+
+\subsubsection*{3) Making the simulator's head trajectory fixed}
+Fix once and for all the physical layout of the level-\(j\) blocks on tape 1 (including the padding gaps) and the work area on tape 2.
+In step \(r\), the simulating machine performs the following phases in a fixed order:
+\begin{enumerate}
+\item \textbf{Local phase (always).} Stay at the shared cursor region, read the scanned symbols (a constant-size neighborhood because \(k\) is fixed), compute \(M\)'s next move in the finite control, and locally update the encoded symbols that represent the scanned cells and the next state.
+\item \textbf{Rebuild phase (scheduled).} For each \(j\) with \(2^j \mid r\) (in increasing \(j\)), execute the level-\(j\) rebuild by scanning exactly the predetermined tape-1 segment that stores the level-\(j\) blocks (for all \(k\) tapes) and using tape 2 for the standard copy/repack procedure.
+Each such rebuild is implemented by the same left-to-right and right-to-left scans of fixed-length segments, independent of contents.
+\end{enumerate}
+Because the list of \(j\) values is determined by \(r\), and the scan boundaries for each level are fixed by the layout chosen from \(t\) and \(n\), the positions of the simulator's two heads at every internal step are a deterministic function of \(r\) and \(n\) only.
+Hence the modified simulator is \gls{obliviousTM}.
+
+\subsubsection*{4) Running-time bound remains \(O(t\log t)\)}
+We bound the extra work caused by rebuilding on a fixed schedule.
+
+A level-\(j\) rebuild costs \(O(2^j)\) time.
+By the schedule, level \(j\) is rebuilt exactly \(\lfloor t/2^j\rfloor\) times.
+Therefore the total time spent on level \(j\) rebuilds is
+\[
+O(2^j)\cdot \left\lfloor \frac{t}{2^j}\right\rfloor = O(t).
+\]
+Summing over all levels \(j=0,1,\dots,m\) gives total rebuild time \(O(t(m+1))=O(t\log t)\).
+The local phase costs \(O(1)\) per simulated step (for fixed \(k\)), hence \(O(t)\) overall.
+Thus the entire simulation still runs in \(O(t\log t)=O(f(n)\log f(n))\) time.
+
+\subsubsection*{5) Conclusion}
+By replacing data-dependent rebuild triggers with a worst-case periodic rebuild schedule, the two-string simulating machine can be made \gls{obliviousTM} while preserving the \(O(f(n)\log f(n))\) time bound up to constant factors.

@@ -1,0 +1,99 @@
+\subsection*{Problem 2.8.12}
+\addcontentsline{toc}{subsection}{Problem 2.8.12}
+
+\paragraph{Statement.}
+Show that if a \gls{turingmachine} uses space that is smaller than \(c\log\log n\) for all \(n>0\), then it uses constant space.
+(This is from \cite{hartmanis1965hierarchies}.)
+
+Consider a ``state'' of a machine with input to also include the string contents of the work strings.
+Then the behavior of the machine on an input prefix can be characterized as a mapping from states to states.
+Consider now the shortest input that requires space \(S>0\); all its prefixes must exhibit different behaviors---otherwise a shorter input requires space \(S\).
+But the number of behaviors is doubly exponential in \(S\).
+Notice that in view of this result, language \(L\) in (g) of Problem 2.8.11 above requires \(O(\log\log n)\) space.
+
+\paragraph{Solution.}
+Fix a deterministic \gls{turingmachine} \(M\) in the usual space model (read-only input tape plus a constant number of work tapes).
+Let \(s(n)\) be the maximum number of work-tape cells \(M\) ever scans on any input of length \(n\). Assume
+\(
+s(n) < c \log\log n
+\)
+for all \(n>0\), where \(c>0\) is a constant to be chosen later.
+We prove that \(s(n)\) is bounded by an absolute constant (depending only on \(M\) and \(c\)), i.e., \(M\) uses constant space.
+
+\subsubsection*{1) Extended states and prefix behaviors}
+For an integer \(S\ge 0\), define an \gls{extendedstate} of \(M\) at space bound \(S\) to consist of:
+\begin{itemize}
+\item the control state \(q\in Q\),
+\item the contents of all work tapes restricted to the first \(S\) visited cells (an element of \(\Gamma^{O(S)}\)), and
+\item the positions of all work-tape heads (each in \(\{1,\dots,S\}\), or a special value if \(S=0\)).
+\end{itemize}
+The number of such extended states satisfies
+\begin{equation}\label{eq:extstates}
+N(S) \;=\; 2^{O(S)}.
+\end{equation}
+(The constant hidden in \(O(S)\) depends on \(M\): number of tapes, \(|Q|\), \(|\Gamma|\).)
+
+Now fix an input alphabet \(\Sigma\) and consider any string \(x\in\Sigma^*\).
+Define the \emph{behavior} of \(x\) at space bound \(S\) to be the function
+\(
+B_x : \{1,\dots,N(S)\} \to \{1,\dots,N(S)\}
+\)
+mapping an extended state \(\sigma\) to the extended state \(\sigma'\) obtained as follows:
+start \(M\) in extended state \(\sigma\) with the input head positioned \emph{immediately to the right of \(x\)} (at the boundary between \(x\) and the suffix), and run \(M\) until the next time its input head again returns to that boundary position with the same orientation convention (for definiteness: the first time it is at the boundary and about to move to the right).
+If such a return happens, let \(\sigma'\) be the extended state then; if it never happens (e.g., the machine halts first), encode that outcome by a designated sink value.
+Because \(M\) is deterministic and we restrict attention to computations that stay within \(S\) work cells, this defines a well-defined function \(B_x\) on a finite domain.
+
+The crucial property is \emph{compositionality}: for any \(x,y\),
+\begin{equation}\label{eq:composition}
+B_{xy} = B_y \circ B_x.
+\end{equation}
+Intuitively, the effect of first exposing the machine to \(x\) and then to \(y\) is the composition of the two boundary-transfer behaviors.
+
+\subsubsection*{2) Counting behaviors: doubly exponential in \(S\)}
+Since \(B_x\) is a function on a set of size \(N(S)\), the number of possible behaviors is at most
+\begin{equation}\label{eq:behcount}
+\#\mathrm{Beh}(S) \;\le\; N(S)^{N(S)} \;=\; 2^{N(S)\log N(S)} \;=\; 2^{2^{O(S)}},
+\end{equation}
+using \eqref{eq:extstates}. This is the ``doubly exponential'' bound from the hint.
+
+\subsubsection*{3) Minimal hard input implies all prefixes have distinct behaviors}
+Assume there exists an input on which \(M\) uses space \(S>0\).
+Let \(w\) be a \emph{shortest} such input, and write \(n=|w|\).
+For each prefix \(w_{\le i}\) of length \(i\in\{0,1,\dots,n\}\), consider its behavior \(B_{w_{\le i}}\) at space bound \(S\).
+
+We claim that these \(n+1\) behaviors are all distinct.
+Indeed, if \(B_{w_{\le i}} = B_{w_{\le j}}\) for some \(0\le i<j\le n\), write \(w = uvz\) where \(u=w_{\le i}\) and \(uv = w_{\le j}\), so \(v\ne \epsilon\).
+By \eqref{eq:composition}, \(B_{uv} = B_v \circ B_u\).
+If \(B_{u}=B_{uv}\), then for any continuation \(z\) the machine's boundary interactions with the suffix after \(u\) are identical whether or not \(v\) is present: the composition law forces the same transfer on extended states at the \(u\!\mid\!z\) boundary.
+Consequently, the computation of \(M\) on \(uz\) reproduces the same sequence of extended states at the boundary as on \(uvz=w\), and in particular reaches a configuration using \(S\) work cells as well.
+Thus \(uz\) is a strictly shorter input requiring space \(S\), contradicting the choice of \(w\).
+Hence all prefix behaviors are distinct.
+
+Therefore,
+\begin{equation}\label{eq:n-beh}
+n+1 \;\le\; \#\mathrm{Beh}(S) \;\le\; 2^{2^{O(S)}}.
+\end{equation}
+
+\subsubsection*{4) Inverting the bound and concluding constant space}
+From \eqref{eq:n-beh} there exists a constant \(a>0\) (depending only on \(M\)) such that for all \(S\ge 1\),
+\begin{equation}\label{eq:invert}
+\log\log n \;\le\; aS + a.
+\end{equation}
+(For example, if \(n \le 2^{2^{aS}}\) then \(\log\log n \le aS\), and additive constants can absorb the ``\(+1\)'' in \(n+1\).)
+
+But on the minimal hard input \(w\) of length \(n\), we also have \(S \le s(n) < c\log\log n\).
+Combining with \eqref{eq:invert} gives
+\[
+S \;<\; c(aS+a) \;=\; (ac)S + ac.
+\]
+If \(c<1/a\), then \((1-ac)S < ac\), hence
+\(
+S < \dfrac{ac}{1-ac},
+\)
+a constant depending only on \(a\) and \(c\).
+Thus \(S\) cannot be arbitrarily large: every computation of \(M\) uses at most a fixed constant amount of work space.
+Equivalently, \(M\) uses constant space.
+
+\subsubsection*{5) Remark}
+This is one of the standard ``lower-than-\(\log\log n\)'' collapse phenomena for space: once the allowed space is below a small enough constant multiple of \(\log\log n\), the machine cannot support unboundedly many distinct prefix behaviors, forcing the space usage to be bounded.
+This explains why the language in Problem 2.8.11(g) sits naturally at the \(O(\log\log n)\) threshold.

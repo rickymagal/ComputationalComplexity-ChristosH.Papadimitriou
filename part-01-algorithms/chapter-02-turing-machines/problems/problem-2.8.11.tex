@@ -1,0 +1,175 @@
+% problem-2.8.11.tex
+\subsection*{Problem 2.8.11}
+\addcontentsline{toc}{subsection}{Problem 2.8.11}
+
+\paragraph{Statement.}
+\textbf{Regular languages.} Suppose that a language \(L\) is decided by a \gls{turingmachine} within space \(k\), and that \(k\) is a constant.
+\begin{enumerate}[label=(\alph*)]
+\item Show that there is an equivalent \gls{turingmachine} deciding \(L\) with only a read-only input string (acceptance and rejection is signaled by states ``yes'' and ``no'', say). Such a machine is called a \gls{twoDFA}.
+A \gls{oneDFA} is a \gls{twoDFA} with only \(\rightarrow\) cursor moves (a ``yes'' or ``no'' state is entered when the first blank is encountered).
+The language decided by a \gls{oneDFA} is called \gls{regularlanguage}.
+\item Show that the following language is \gls{regularlanguage}:
+\[
+L=\{\,x\in\{0,1\}^* : x \text{ contains at least two } 0\text{s but not two consecutive } 0\text{s}\,\}.
+\]
+For more on \gls{regularlanguage} languages see the book by Lewis and Papadimitriou cited above, as well as Problems 3.4.2 and 20.2.13.
+\item Let \(L\subseteq \Sigma^*\) be a language, and define the following \gls{equivalencerelation} on \(\Sigma^*\):
+\(
+x \equiv_L y
+\)
+if for all \(z\in\Sigma^*\), \(xz\in L\) iff \(yz\in L\).
+Show that \(L\) is \gls{regularlanguage} if and only if there are finitely many \glspl{equivalenceclass} in \(\equiv_L\). How many equivalence classes are there in the case of the language in (b) above?
+\item Show that if a language \(L\) is decided by a \gls{twoDFA}, then it is \gls{regularlanguage}.
+(This is a quite subtle argument from \cite{shepherdson1959}.)
+\end{enumerate}
+
+Show that \(x \equiv_L y\) if and only if \(x\) and \(y\) ``effect the same behavior'' on the \gls{twoDFA}. Here by ``behavior'' one should understand a certain mapping from state to state (cf.\ part (c)). We conclude that \(\mathrm{SPACE}(k)\), where \(k\) is any integer, is precisely the class of \gls{regularlanguage} languages (part (c)).
+
+\begin{enumerate}[label=(\alph*),resume]
+\item Show that, if \(L\) is infinite and \gls{regularlanguage}, then there are \(x,y,z\in\Sigma^*\) such that \(y\ne \epsilon\), and \(xy^i z \in L\) for all \(i \ge 0\). (Since there are finitely many states in the machine, one long enough string one must repeat.)
+\item Recall that \(b(i)\) stands for the binary representation of integer \(i\), with no leading zeros.
+Show that the language of ``\gls{arithmeticprogression}''
+\[
+L=\{\, b(1);\ b(2);\ \cdots;\ b(n) : n \ge 1 \,\}
+\]
+is not \gls{regularlanguage}. (Use part (e) above.)
+\item Show that \(L\) in part (f) above can be decided in space \(\log\log n\).
+\end{enumerate}
+
+\paragraph{Solution.}
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{\(\mathrm{SPACE}(O(1))\) implies a two-way finite automaton.}
+Let \(M\) be a decider for \(L\) that uses at most \(k\) work-tape cells, where \(k\) is a fixed constant.
+Assume the standard space-complexity model: \(M\) has a read-only input tape, a read/write work tape, and halting accept/reject states.
+
+Because the work tape has only \(k\) cells, a complete description of the work tape consists of:
+\begin{itemize}
+\item the current control state \(q\in Q\),
+\item the contents of the \(k\) work-tape cells (an element of \(\Gamma^k\)), and
+\item the work-tape head position (an integer in \(\{1,\dots,k\}\)).
+\end{itemize}
+There are only finitely many such triples. Let \(Q'\) be the set of all these triples, and view them as the states of a new machine \(A\) that has \emph{no} work tape at all.
+On input symbol \(a\in\Sigma\cup\{\sqcup\}\) and state \((q,\tau,p)\in Q'\), \(A\) looks up \(M\)'s transition on \((q,a,\tau_p)\), updates \((q,\tau,p)\) accordingly, and moves only its input head \(L/R/S\) as \(M\) would.
+Accept and reject are represented by dedicated halting states.
+
+Thus \(A\) is a \gls{twoDFA} (read-only input, finite control) deciding \(L\).
+
+\item \textbf{A DFA for the given language.}
+Let \(L=\{x\in\{0,1\}^*: x\text{ has at least two }0\text{s and no substring }00\}\).
+A \gls{oneDFA} can track (i) whether we have seen \(0\) zeroes, exactly \(1\) zero, or at least \(2\) zeroes, and (ii) whether the previous symbol was \(0\).
+
+Define states:
+\begin{itemize}
+\item \(q_{0}\): seen \(0\) zeroes so far, previous symbol is not \(0\) (start);
+\item \(q_{1,0}\): seen exactly \(1\) zero, previous symbol is \(0\);
+\item \(q_{1,1}\): seen exactly \(1\) zero, previous symbol is \(1\);
+\item \(q_{2,0}\): seen at least \(2\) zeroes, previous symbol is \(0\) (accepting);
+\item \(q_{2,1}\): seen at least \(2\) zeroes, previous symbol is \(1\) (accepting);
+\item \(q_{\times}\): dead state (the string has a substring \(00\)).
+\end{itemize}
+Transitions are the obvious ones (reading \(0\) from a state with previous \(0\) goes to \(q_{\times}\), otherwise it increases the zero-counter class and sets ``previous \(0\)'').
+This DFA accepts exactly \(L\), so \(L\) is \gls{regularlanguage}.
+
+\item \textbf{Myhill--Nerode theorem and counting classes for (b).}
+Define \(x\equiv_L y\) iff for all \(z\in\Sigma^*\), \(xz\in L \Leftrightarrow yz\in L\).
+This is a right-invariant \gls{equivalencerelation} (a right congruence).
+
+\paragraph{(\(\Rightarrow\)) If \(L\) is regular, then \(\equiv_L\) has finitely many classes.}
+Let \(A=(Q,\Sigma,\delta,q_0,F)\) be a \gls{oneDFA} for \(L\).
+For any \(x\in\Sigma^*\), let \(\hat{\delta}(q_0,x)\) be the state reached after reading \(x\).
+If \(\hat{\delta}(q_0,x)=\hat{\delta}(q_0,y)\), then for every \(z\),
+\(
+xz\in L \Leftrightarrow \hat{\delta}(q_0,xz)\in F \Leftrightarrow \hat{\delta}(q_0,yz)\in F \Leftrightarrow yz\in L.
+\)
+Hence \(x\equiv_L y\). Therefore the number of \(\equiv_L\)-classes is at most \(|Q|\), finite.
+
+\paragraph{(\(\Leftarrow\)) If \(\equiv_L\) has finitely many classes, then \(L\) is regular.}
+Assume \(\equiv_L\) has finitely many equivalence classes.
+Construct a DFA whose states are the classes \([x]\), with start state \([\epsilon]\), accepting states \(\{[x]:x\in L\}\), and transition
+\(
+\delta([x],a)=[xa].
+\)
+This is well-defined because \(x\equiv_L y\Rightarrow xa\equiv_L ya\).
+By construction, the DFA accepts exactly \(L\).
+Thus \(L\) is \gls{regularlanguage}. (This is the Myhill--Nerode theorem; see \cite{nerode1958,myhill1957,hopcroftullman1979,sipser2012introduction}.)
+
+\paragraph{Number of classes for the language in (b).}
+For \(L\) from (b), \(\equiv_L\) has exactly \(6\) classes, corresponding to the DFA above:
+\begin{itemize}
+\item strings with no \(0\) yet (\(q_0\));
+\item exactly one \(0\), previous symbol \(0\) (\(q_{1,0}\));
+\item exactly one \(0\), previous symbol \(1\) (\(q_{1,1}\));
+\item at least two \(0\)s, previous symbol \(0\) (\(q_{2,0}\));
+\item at least two \(0\)s, previous symbol \(1\) (\(q_{2,1}\));
+\item the dead class containing a substring \(00\) (\(q_{\times}\)).
+\end{itemize}
+These classes are pairwise distinct (for instance, appending \(0\) distinguishes \(q_{1,0}\) from \(q_{1,1}\), and distinguishes \(q_{2,0}\) from \(q_{2,1}\)).
+
+\item \textbf{Two-way DFA implies regular.}
+Let \(A\) be a \gls{twoDFA} deciding \(L\), with state set \(Q\).
+The standard theorem is that two-way deterministic finite automata recognize exactly the \gls{regularlanguage} languages; equivalently, every \gls{twoDFA} has an equivalent \gls{oneDFA}.
+A proof can be given by associating to each string \(x\) a finite ``behavior'' object that records how \(A\) moves across the boundary between \(x\) and a suffix, and showing that there are only finitely many such behaviors (bounded by a function of \(|Q|\)), so \(\equiv_L\) has finite index; then apply part (c).
+This construction and its correctness are due to Shepherdson \cite{shepherdson1959}; modern presentations appear in standard texts (e.g.\ \cite{hopcroftullman1979,sipser2012introduction}).
+Therefore \(L\) is \gls{regularlanguage}.
+\end{enumerate}
+
+\begin{enumerate}[label=(\alph*),resume]
+\item \textbf{Pumping lemma for regular languages.}
+Let \(L\) be infinite and \gls{regularlanguage}, and let \(A=(Q,\Sigma,\delta,q_0,F)\) be a DFA for \(L\).
+Let \(p=|Q|\). Since \(L\) is infinite, there exists \(w\in L\) with \(|w|\ge p\).
+Consider the run of \(A\) on \(w\). Among the first \(p+1\) visited states, some state repeats; thus
+\(w=xyz\) with \(|xy|\le p\), \(|y|\ge 1\), and \(\hat{\delta}(q_0,xy^i z)\in F\) for all \(i\ge 0\).
+Hence \(xy^i z\in L\) for all \(i\ge 0\).
+(This is the \gls{pumpinglemma}; see \cite{hopcroftullman1979,sipser2012introduction}.)
+
+\item \textbf{The ``arithmetic progression'' language is not regular.}
+Let
+\(
+L=\{\,b(1);\ b(2);\ \cdots;\ b(n): n\ge 1\,\}
+\)
+over the alphabet \(\{0,1,;\}\).
+Assume, for contradiction, that \(L\) is \gls{regularlanguage}. Let \(p\) be its pumping length from (e).
+
+Choose \(k\) such that the fixed prefix
+\(
+P=b(1);\ b(2);\ \cdots;\ b(k)
+\)
+has length at least \(p\).
+Now take \(w=b(1);\cdots;\,b(n)\in L\) with \(n\ge k\), so \(P\) is a prefix of \(w\), and the first \(p\) symbols of \(w\) lie entirely inside \(P\).
+
+By the pumping lemma, write \(w=xyz\) with \(|xy|\le p\) and \(|y|\ge 1\).
+Then \(y\) lies within the first \(p\) symbols of \(w\), hence within the fixed prefix \(P\).
+Consider \(w'=xy^0 z=xz\), obtained by deleting \(y\).
+Because \(|y|\ge 1\), the first \(p\) symbols of \(w'\) differ from the first \(p\) symbols of \(w\), hence \(w'\) does \emph{not} have prefix \(P\).
+
+But every string in \(L\) of the form \(b(1);\cdots;\,b(m)\) with \(m\ge k\) necessarily begins with the same prefix \(P\).
+Also, \(w'\) is longer than \(|P|\) (it still contains the suffix of \(w\) beyond \(P\)), so \(w'\) cannot equal any string \(b(1);\cdots;\,b(m)\) with \(m<k\).
+Therefore \(w'\notin L\), contradicting the pumping lemma conclusion that \(xy^i z\in L\) for all \(i\ge 0\).
+Hence \(L\) is not \gls{regularlanguage}.
+
+\item \textbf{Deciding the language in space \(\log\log n\).}
+Let the input length be \(n\). We sketch a decider using \(O(\log\log n)\) work space.
+
+The input is a sequence of binary blocks separated by the delimiter ``;''. The algorithm checks:
+\begin{enumerate}
+\item the first block is exactly \(b(1)=1\);
+\item every subsequent block is the binary successor of the previous block;
+\item the string ends exactly after the last block.
+\end{enumerate}
+
+\paragraph{Space bound.}
+At any point, the algorithm stores only:
+\begin{itemize}
+\item the current block length \(\ell \le \lfloor \log_2 n \rfloor + 1\), using \(O(\log \ell)=O(\log\log n)\) bits;
+\item an index \(j\in\{0,\dots,\ell\}\) while comparing bits from right to left, using \(O(\log \ell)\) bits;
+\item a constant number of flags (carry bit, etc.).
+\end{itemize}
+
+\paragraph{Successor test using two-way input head.}
+To check that a block \(B\) is the successor of block \(A\), the machine repeatedly scans to the end of each block (the next ``;'' or end-of-input) and then moves left \(j\) positions to read the \(j\)-th bit from the right.
+By iterating \(j=0,1,\dots,\ell-1\) and maintaining a one-bit carry, it verifies the addition-by-one rule without storing the full value of \(A\) or \(B\).
+The special case where \(|B|=\ell+1\) is handled by checking that \(A\) is all ones and \(B\) is \(1\) followed by \(\ell\) zeros.
+
+Because the input head may move both directions, the machine can re-scan blocks as many times as needed; time is not constrained in a space bound.
+Thus the decider uses \(O(\log\log n)\) space.
+\end{enumerate}

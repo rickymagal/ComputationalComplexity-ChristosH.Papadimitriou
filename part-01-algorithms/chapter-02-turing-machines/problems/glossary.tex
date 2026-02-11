@@ -38,7 +38,7 @@
   name={overhead},
   description={The multiplicative slowdown factor incurred when one computational model simulates another}
 }
-\
+
 
 
 \newglossaryentry{twodtape}{
@@ -56,7 +56,6 @@
   description={The mapping \(\delta\) that determines, from the current state and scanned symbol(s), the next state, symbol(s) written, and head move(s)}
 }
 
-\
 
 \newglossaryentry{editoperation}{
   name={edit operation},
@@ -73,7 +72,167 @@
   description={Operation that removes the symbol at the current head position (if any) and shifts the suffix one cell to the left}
 }
 
-\newglossaryentry{transitionfunction}{
-  name={transition function},
-  description={The mapping \(\delta\) that determines, from the current state and scanned symbol(s), the next state, tape update, and head move(s)}
+
+\newglossaryentry{amortizedanalysis}{
+  name={amortized analysis},
+  description={A method for bounding the average cost per operation over a sequence, by charging occasional expensive operations to many cheap steps},
+  sort={amortized analysis}
+}
+
+
+\newglossaryentry{obliviousTM}{
+  name={oblivious Turing machine},
+  description={A Turing machine whose head positions at time \(t\) depend only on \(t\) and the input length \(n\), not on the specific input},
+  sort={oblivious turing machine}
+}
+
+\newglossaryentry{booleancircuit}{
+  name={Boolean circuit},
+  description={A directed acyclic graph of logic gates computing a Boolean function; a more ``static'' computation model than a Turing machine},
+  sort={boolean circuit}
+}
+% glossary-additions-2.8.11.tex
+% Add these entries to glossary.tex if they are not already present.
+
+\newglossaryentry{twoDFA}{
+  name={two-way finite automaton},
+  description={A finite automaton whose input head may move left and right on a read-only input (typically with endmarkers)},
+  sort={two way finite automaton}
+}
+
+\newglossaryentry{oneDFA}{
+  name={one-way finite automaton},
+  description={A finite automaton that reads the input strictly left-to-right (only \(\rightarrow\) moves)},
+  sort={one way finite automaton}
+}
+
+\newglossaryentry{regularlanguage}{
+  name={regular language},
+  description={A language recognized by a one-way finite automaton (equivalently, by a regular expression)},
+  sort={regular language}
+}
+
+\newglossaryentry{equivalencerelation}{
+  name={equivalence relation},
+  description={A relation that is reflexive, symmetric, and transitive},
+  sort={equivalence relation}
+}
+
+\newglossaryentry{equivalenceclass}{
+  name={equivalence class},
+  description={For an equivalence relation \(\sim\), the set \([x]=\{y : y\sim x\}\)},
+  sort={equivalence class}
+}
+
+\newglossaryentry{myhillnerode}{
+  name={Myhill--Nerode theorem},
+  description={A language is regular iff the right congruence \(\equiv_L\) has finitely many equivalence classes},
+  sort={myhill nerode theorem}
+}
+
+\newglossaryentry{pumpinglemma}{
+  name={pumping lemma},
+  description={A property of regular languages guaranteeing that sufficiently long strings can be decomposed and ``pumped''},
+  sort={pumping lemma}
+}
+
+\newglossaryentry{arithmeticprogression}{
+  name={arithmetic progression},
+  description={Here: the concatenation \(b(1);\ b(2);\ \cdots;\ b(n)\) of successive binary integers separated by a delimiter},
+  sort={arithmetic progression}
+}
+\newglossaryentry{extendedstate}{
+  name={extended state},
+  description={A machine state augmented with the contents of the bounded work tapes and the work-head positions; essentially a work-space-bounded configuration with the input head position abstracted out},
+  sort={extended state}
+}
+\newglossaryentry{palindrome}{
+  name={palindrome},
+  description={A string that equals its reversal},
+  sort={palindrome}
+}
+
+\newglossaryentry{spacecompression}{
+  name={space compression},
+  description={A transformation that reduces the work-space usage of a Turing machine by a constant factor by packing multiple tape symbols into one},
+  sort={space compression}
+}
+
+\newglossaryentry{ndtm}{
+  name={nondeterministic Turing machine},
+  description={A Turing machine whose transition function may offer multiple possible moves; it accepts if at least one computation branch accepts},
+  sort={nondeterministic turing machine}
+}
+
+\newglossaryentry{configurationgraph}{
+  name={configuration graph},
+  description={A directed graph whose vertices are configurations of a machine on a fixed input and whose edges represent legal single-step transitions},
+  sort={configuration graph}
+}
+
+\newglossaryentry{reachabilityproblem}{
+  name={reachability},
+  description={Given a directed graph and two vertices \(s,t\), decide whether there is a directed path from \(s\) to \(t\); here, reachability in a configuration graph},
+  sort={reachability}
+}
+
+\newglossaryentry{spacebounded}{
+  name={space-bounded computation},
+  description={A computation whose work-tape usage is bounded by a function \(S(n)\) of the input length},
+  sort={space bounded computation}
+}
+
+\newglossaryentry{simplepath}{
+  name={simple path},
+  description={A path in a graph that does not repeat vertices},
+  sort={simple path}
+}
+% glossary-additions-2.8.17.tex
+% Add these entries to glossary.tex if they are not already present.
+
+\newglossaryentry{kstringntm}{
+  name={\(k\)-string nondeterministic Turing machine},
+  description={A nondeterministic Turing machine with a read-only input string and \(k\) additional work strings (tapes), each with its own head},
+  sort={k-string nondeterministic turing machine}
+}
+
+\newglossaryentry{twostringntm}{
+  name={2-string nondeterministic Turing machine},
+  description={A nondeterministic Turing machine with a read-only input string and two additional strings (tapes) total, i.e., one work string besides the input},
+  sort={two-string nondeterministic turing machine}
+}
+
+\newglossaryentry{singlestringntm}{
+  name={single-string nondeterministic Turing machine},
+  description={A nondeterministic Turing machine with a read-only input string and a single additional work string},
+  sort={single-string nondeterministic turing machine}
+}
+
+\newglossaryentry{instantaneousdescription}{
+  name={instantaneous description},
+  description={A complete snapshot of a Turing machine at a moment in time: state, head positions, and work-tape contents within the space used so far},
+  sort={instantaneous description}
+}
+
+\newglossaryentry{nondeterminism}{
+  name={nondeterminism},
+  description={A computation model in which a transition may branch into multiple possible moves; acceptance means that at least one branch accepts},
+  sort={nondeterminism}
+}
+\newglossaryentry{nfa}{
+  name={nondeterministic finite automaton (NFA)},
+  description={A finite automaton that may have multiple possible next states for a given state and input symbol; it accepts if some path ends in an accepting state},
+  sort={nondeterministic finite automaton}
+}
+
+\newglossaryentry{dfa}{
+  name={deterministic finite automaton (DFA)},
+  description={A finite automaton with exactly one next state for each state and input symbol},
+  sort={deterministic finite automaton}
+}
+
+\newglossaryentry{subsetconstruction}{
+  name={subset construction},
+  description={The powerset transformation that converts an NFA with state set \(Q\) into a DFA with states \(2^Q\) recognizing the same language},
+  sort={subset construction}
 }

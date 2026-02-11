@@ -1,0 +1,88 @@
+% problem-2.8.18.tex
+\subsection*{Problem 2.8.18}
+\addcontentsline{toc}{subsection}{Problem 2.8.18}
+
+\paragraph{Statement.}
+\begin{enumerate}[label=(\alph*)]
+\item Show that a nondeterministic one-way finite automaton (recall 2.8.11) can be simulated by a deterministic one, with possibly exponentially many states.
+(Construct a deterministic automaton each state of which is a set of states of the given nondeterministic one.)
+\item Show that the exponential growth in (a) is inherent.
+(Consider the language \(L=\{x\sigma : x \in (\Sigma\setminus\{\sigma\})^*\}\), where the alphabet \(\Sigma\) has \(n\) symbols.)
+\end{enumerate}
+
+\paragraph{Solution.}
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Subset construction (\gls{nfa} \(\to\) \gls{dfa}).}
+Let \(N=(Q,\Sigma,\delta,q_0,F)\) be a (one-way) \gls{nfa}. Here \(\delta(q,a)\subseteq Q\) is the set of possible next states from \(q\) on input symbol \(a\).
+(If \(\varepsilon\)-moves are allowed, replace the start set below by the \(\varepsilon\)-closure of \(q_0\).)
+
+Define a \gls{dfa}
+\(
+D=(Q',\Sigma,\delta',q_0',F')
+\)
+by:
+\begin{itemize}
+\item \(Q' = 2^Q\) (the set of all subsets of \(Q\));
+\item \(q_0' = \{q_0\}\);
+\item for \(S\subseteq Q\) and \(a\in\Sigma\),
+\begin{equation}\label{eq:subset}
+\delta'(S,a)=\bigcup_{q\in S}\delta(q,a);
+\end{equation}
+\item \(F'=\{S\subseteq Q : S\cap F\neq\emptyset\}\).
+\end{itemize}
+
+Let \(\hat{\delta}\) and \(\hat{\delta}'\) be the extended transition functions of \(N\) and \(D\), respectively.
+We prove by induction on \(|w|\) that for every \(w\in\Sigma^*\),
+\begin{equation}\label{eq:reachset}
+\hat{\delta}'(\{q_0\},w)=\{\,q\in Q : q \text{ is reachable in }N\text{ from }q_0\text{ by reading }w\,\}.
+\end{equation}
+
+\emph{Base case.} For \(w=\epsilon\), \(\hat{\delta}'(\{q_0\},\epsilon)=\{q_0\}\), which matches the right-hand side.
+
+\emph{Inductive step.} Write \(w=ua\) with \(a\in\Sigma\).
+Assuming \eqref{eq:reachset} holds for \(u\), we have
+\[
+\hat{\delta}'(\{q_0\},ua)=\delta'(\hat{\delta}'(\{q_0\},u),a)
+=\bigcup_{q\in \hat{\delta}'(\{q_0\},u)}\delta(q,a)
+\]
+by \eqref{eq:subset}.
+By the induction hypothesis, \(\hat{\delta}'(\{q_0\},u)\) is exactly the set of states reachable in \(N\) after reading \(u\), so the union above is exactly the set of states reachable after reading \(ua\).
+Thus \eqref{eq:reachset} holds for \(ua\) as well.
+
+Therefore \(D\) accepts \(w\) iff \(\hat{\delta}'(\{q_0\},w)\cap F\neq\emptyset\), which is equivalent to \(N\) having at least one accepting path on \(w\).
+Hence \(L(D)=L(N)\), and \(|Q'|\le 2^{|Q|}\).
+This is the classical \gls{subsetconstruction} (see \cite{hopcroftullman1979,sipser2013}).
+
+\item \textbf{The exponential blow-up can be necessary.}
+To avoid ambiguity in the hint's notation, interpret the language as
+\begin{equation}\label{eq:Ldef}
+L \;=\; \{\,x\sigma : \sigma\in\Sigma,\ x\in(\Sigma\setminus\{\sigma\})^*\,\},
+\end{equation}
+i.e., \(w\in L\) iff the last symbol of \(w\) does not appear earlier in \(w\).
+Assume \(|\Sigma|=n\).
+
+\paragraph{An \gls{nfa} of size \(O(n)\) for \(L\).}
+Build an \gls{nfa} \(N\) that nondeterministically guesses the final symbol \(\sigma\).
+Use states:
+one start state \(q_{\mathrm{start}}\), one accepting state \(q_{\mathrm{acc}}\), and for each \(\sigma\in\Sigma\) a state \(q_\sigma\).
+From \(q_{\mathrm{start}}\), add an \(\varepsilon\)-transition to every \(q_\sigma\).
+In state \(q_\sigma\), on any input symbol \(a\neq \sigma\) stay in \(q_\sigma\); on input \(\sigma\) go to \(q_{\mathrm{acc}}\).
+From \(q_{\mathrm{acc}}\), on any further input symbol move to a dead sink; acceptance occurs only if the input ends immediately after reading \(\sigma\).
+This \gls{nfa} has \(n+O(1)\) states and recognizes \(L\).
+
+\paragraph{Any equivalent \gls{dfa} needs at least \(2^n\) states.}
+We use the \gls{myhillnerode} theorem (Problem 2.8.11(c)).
+For each subset \(A\subseteq\Sigma\), choose a string \(x_A\) that lists exactly the symbols of \(A\) once each (in any fixed order), and no other symbols.
+We claim that if \(A\neq B\) then \(x_A \not\equiv_L x_B\).
+
+Pick \(a\in A\triangle B\) and assume \(a\in A\setminus B\).
+Let \(z=a\). Then:
+\begin{itemize}
+\item \(x_A a \notin L\), because the last symbol \(a\) already appears earlier in \(x_A\);
+\item \(x_B a \in L\), because \(a\notin B\) implies \(x_B\in(\Sigma\setminus\{a\})^*\), hence \(x_B a\in(\Sigma\setminus\{a\})^* a \subseteq L\).
+\end{itemize}
+Thus \(x_A\) and \(x_B\) are distinguished by the continuation \(z=a\), so they lie in different \(\equiv_L\)-classes.
+Therefore \(\equiv_L\) has at least \(2^n\) equivalence classes, one per subset \(A\subseteq\Sigma\), and any \gls{dfa} for \(L\) needs at least \(2^n\) states.
+
+Combining the \(O(n)\)-state \gls{nfa} with the \(2^n\) \gls{dfa} lower bound shows that the exponential blow-up in part (a) is inherent in general.
+\end{enumerate}
