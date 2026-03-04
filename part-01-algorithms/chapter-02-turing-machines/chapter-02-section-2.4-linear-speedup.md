@@ -1,6 +1,5 @@
 # Chapter 2 — Section 2.4: Linear Speedup
 
-## The purpose of linear speedup in this book
 Linear speedup is the formal justification for a cultural norm in complexity theory:
 - constant factors are not the point,
 - growth rates are.
