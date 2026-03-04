@@ -1,49 +1,13 @@
 # Chapter 1 — Section 1.3: The Traveling Salesman Problem (TSP)
 
-## Why TSP is placed here
-Reachability and max flow are “happy stories”: clean polynomial-time algorithms with strong certificates.
-TSP is introduced as the counterweight:
-- a natural, simple-to-state problem,
-- a strong algorithmic tradition,
-- and still no known polynomial-time exact algorithm in general.
+The Traveling Salesman Problem is not here to be solved. It is here to *break the pattern*. After two sections of triumphant algorithmic success -- REACHABILITY in O(n²), MAX FLOW and MATCHING in polynomial time -- TSP arrives looking structurally similar but behaving completely differently. 
 
-TSP is one of the key motivational engines behind the emergence of complexity theory: it forces you to ask whether “efficient” always exists, or whether some tasks are inherently intractable.
+What Papadimitriou is doing is establishing the phenomenology of intractability *before* providing any theoretical explanation for it. You have now witnessed, firsthand, the experience of a problem that defeats every algorithmic approach. Enumeration is n!. Dynamic programming brings it down to O(n² · 2ⁿ), which is better but still exponential. Heuristics return good-looking answers but with no guarantee of optimality. And crucially, nobody has found a polynomial algorithm despite TSP being one of the most intensively studied problems in mathematics. That gap between the effort spent and the results achieved is not a coincidence -- it is, the book will argue, a structural feature of the problem.
 
-## The problem (optimization and decision)
-**Optimization (TSP):** find the minimum-length Hamiltonian cycle (tour).  
-**Decision (TSP(D)):** given a bound \(B\), does there exist a tour of length at most \(B\)?
+The phrase Papadimitriou uses is careful and precise: the assertion that no polynomial algorithm for TSP exists "is one of the many ways of stating the P ≠ NP conjecture." This is the first time P ≠ NP appears, and it as a *conjecture that organizes our experience*. The student is being invited to treat as the explanation for something they've just personally run into. Why can't we solve TSP efficiently? Probably because P ≠ NP. The rest of the book is, in many ways, the elaboration of that "probably."
 
-The decision form is the one that fits best into complexity classes and reductions later, but algorithm design often starts from the optimization form.
+Yes, fellow student. The study of complexity is based upon "P ≠ NP is probably true". P = NP could be added to our mathematical formal system without any contradiction. With complete consistency. But no one has been able to prove it yet! The implications of P = NP would be catastrophic to the field (more on that: [da Costa, N.C.A.; Doria, F.A. Consequences of an exotic definition for P = NP. Applied Mathematics and Computation, v. 145, n. 2-3, p. 655–665, 2003. DOI: 10.1016/S0096-3003(03)00176-0])
 
-## The Held–Karp dynamic program: what it teaches
-The classical dynamic program uses states \((S,j)\):
-- \(S\) is the set of visited cities,
-- \(j\) is the last city,
-- the recurrence removes \(j\) and tries all possible predecessors.
+There is also something important in the contrast between TSP and the problems that precede it. REACHABILITY and MAX FLOW both have the property that *short certificates exist* for "yes" instances: to prove that node n is reachable, you exhibit a path; to prove a flow is maximum, you exhibit a min-cut. TSP (D) also has short certificates for "yes" instances — you just exhibit the tour. But finding that tour appears to require exponential search. This asymmetry between *verifying* a solution and *finding* one is exactly what the class NP is designed to capture, and Chapter 8 will make it precise. Section 1.3 is planting the intuition for NP long before the formal definition arrives.
 
-This is a canonical “subset DP” pattern:
-- correctness from optimal substructure (last step decomposition),
-- exponential state space (\(2^{n}\)),
-- polynomial work per state (\(O(n)\)).
-
-The headline bound is \(O(n^2 2^n)\) time and \(O(n 2^n)\) space: dramatically better than \(n!\), but still exponential.
-
-Complexity insight: this is the first explicit demonstration that “cleverness” can cut factorial to exponential, yet still fail to reach polynomial time.
-
-## Cross-source insight: metric vs general TSP
-Papadimitriou states TSP in a complete graph with symmetric distances, but algorithmic behavior changes drastically depending on additional structure:
-- **Metric TSP** (triangle inequality) admits constant-factor approximation (e.g., Christofides’ 3/2-approx).
-- **General TSP** (no triangle inequality) is much harder to approximate; strong inapproximability results are known unless P=NP.
-
-So when you see “TSP,” always ask: what assumptions on distances are in force? That question becomes central in approximation and hardness chapters.
-
-TSP(D) is NP-complete (via Karp’s reductions). This is not proven in Chapter 1, but this section is clearly preparing the reader to accept that some “simple” problems may encode vast combinatorial search spaces.
-
----
-
-## References
-- Christos H. Papadimitriou, *Computational Complexity*, Addison–Wesley, 1994. (Chapter 1, Section 1.3)
-- Michael Held and Richard M. Karp, “A Dynamic Programming Approach to Sequencing Problems,” *J. SIAM*, 1962. (Held–Karp DP)
-- Richard M. Karp, “Reducibility Among Combinatorial Problems,” in *Complexity of Computer Computations*, Plenum Press, 1972. (NP-completeness of TSP(D))
-- Nicos Christofides, “Worst-case analysis of a new heuristic for the travelling salesman problem,” 1976. (3/2-approx for metric TSP; widely cited technical report)
-- CLRS, *Introduction to Algorithms*, 3rd ed., MIT Press, 2009. (TSP discussion; approximation pointers)
+Read together, the three sections of Chapter 1 form a single argument: problems are mathematical objects worth studying in their own right; polynomial-time computability is the right measure of tractability; and the line between tractable and intractable problems is real, sharp, and not yet fully understood. Everything that follows -- Turing machines, logic, complexity classes, reductions, NP-completeness, randomization, approximation -- is built to understand that line more precisely.
