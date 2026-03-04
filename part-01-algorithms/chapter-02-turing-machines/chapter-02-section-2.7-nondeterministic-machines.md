@@ -1,7 +1,6 @@
 # Chapter 2 — Section 2.7: Nondeterministic Machines
 
-## Why nondeterminism is introduced “too early”
-Nondeterminism is not presented as a realistic computing device. It is introduced because it gives complexity theory its most important *problem taxonomy tool*:
+Nondeterminism is not a realistic computing device. It is introduced because it gives complexity theory its most important *problem taxonomy tool*:
 - define classes by “efficient verification” rather than “efficient search.”
 
 This is the conceptual hinge that makes NP feel natural rather than arbitrary.
