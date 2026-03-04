@@ -1,6 +1,5 @@
 # Chapter 1 — Section 1.2: Maximum Flow (and Matching)
 
-## Why this section matters for complexity
 This section introduces a second algorithmic “paradigm,” very different from plain search:
 - **Optimization by local improvement** (augmenting a feasible solution).
 - **Correctness via a global certificate** (cuts and the max-flow min-cut theorem).
