@@ -14,7 +14,7 @@ Papadimitriou’s TM is intentionally austere:
 - finite control (states),
 - a transition relation/function.
 
-The intellectual punchline is that *program expressivity comes from unbounded memory + finite control*, not from a rich instruction set.
+The punchline is that *program expressivity comes from unbounded memory + finite control*, not from a rich instruction set.
 
 This framing anticipates later complexity arguments: when you prove lower bounds or separations, you want to avoid arguing about a specific programming language.
 
@@ -51,7 +51,7 @@ You should mentally tag every “design choice” as either:
 The proof style resembles finite automata (transition graphs, reachability), but with one decisive difference:
 - the tape gives an unbounded configuration space, so reachability reasoning can become nontrivial (and later undecidable).
 
-So the section is also quietly setting up Chapter 3: once configurations become first-class objects, you can write machines that *talk about machines*.
+So the section is also quietly setting up Chapter 3: once configurations become first-class objects, you can write machines that *encode machines*.
 
 ---
 
