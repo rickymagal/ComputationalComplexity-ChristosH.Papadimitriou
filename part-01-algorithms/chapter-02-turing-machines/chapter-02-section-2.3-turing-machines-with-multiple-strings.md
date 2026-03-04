@@ -1,6 +1,5 @@
 # Chapter 2 — Section 2.3: Turing Machines with Multiple Strings (Multitape View)
 
-## Why multitape machines are introduced here
 Single-tape TMs are intentionally awkward; multitape machines are introduced as the first realism upgrade:
 - algorithm design becomes readable,
 - but the model is still provably equivalent (up to polynomial factors).
