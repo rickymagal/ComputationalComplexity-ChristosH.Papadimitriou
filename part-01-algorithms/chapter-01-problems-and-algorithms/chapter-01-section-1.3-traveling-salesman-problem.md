@@ -37,7 +37,6 @@ Papadimitriou states TSP in a complete graph with symmetric distances, but algor
 
 So when you see “TSP,” always ask: what assumptions on distances are in force? That question becomes central in approximation and hardness chapters.
 
-## Complexity-theory connection
 TSP(D) is NP-complete (via Karp’s reductions). This is not proven in Chapter 1, but this section is clearly preparing the reader to accept that some “simple” problems may encode vast combinatorial search spaces.
 
 ---
