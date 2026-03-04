@@ -1,62 +1,15 @@
-# Chapter 2 — Section 2.1: Turing Machine Basics
+# Chapter 2 — Sections 2.1 & 2.2: Turing Machine Basics and Turing Machines as Algorithms
 
-The book is fixing a *minimal* formal model that is:
-- precise enough to support proofs about algorithms,
-- flexible enough to encode essentially any effective procedure,
-- crude enough that “efficiency” has to be discussed carefully (overheads, encodings, simulation).
+Why does a book on computational complexity open its formal treatment with something as primitive and clunky as a Turing machine? A single tape, a cursor that crawls left and right one cell at a time, a handful of symbols -- it looks nothing like an actual computer. That is precisely the point.
 
-This is the first move in the book’s larger program: *make “algorithm” a mathematical object*.
+Papadimitriou is not asking you to program in Turing machines. He is asking you to accept them as the *right language for talking about computation in general*. And for that purpose, the weakness of the model is a feature, not a bug. If even this feeble device can compute everything a modern computer can -- modulo polynomial factors -- then any claim about what is computationally hard becomes much harder to dismiss. You cannot say "well, maybe a faster machine could do it." The model has already settled that question by design.
 
-## Minimality is the point
-Papadimitriou’s TM is intentionally austere:
-- one main data structure (a string/tape),
-- one read/write head,
-- finite control (states),
-- a transition relation/function.
+The formal definition is worth dwelling on. A Turing machine is a quadruple M = (K, Σ, δ, s): a finite set of states, a finite alphabet, a transition function, and an initial state. The transition function δ is the entire "program" of the machine -- it maps the current state and the currently scanned symbol to a new state, a symbol to write, and a direction to move. That is all. There is no stack, no heap, no random access. The string on the tape grows to the right as needed, but never shrinks. The machine halts when it reaches one of three designated states: accept, reject, or a general halting state for function computation.
 
-The punchline is that *program expressivity comes from unbounded memory + finite control*, not from a rich instruction set.
+What Section 2.1 is quietly doing is establishing that *finite information can control unbounded computation*. The state set K is finite -- the machine has a fixed, finite "memory" in its current state -- yet by moving back and forth on an unbounded tape it can carry out arbitrarily complex procedures. The palindrome example (Example 2.3) makes this vivid: the machine has no random access to the string, yet it checks the palindrome property by repeatedly comparing the outermost characters and shrinking the string inward. It is almost meditative to watch. And the point is that this severely limited device is already doing something non-trivial.
 
-This framing anticipates later complexity arguments: when you prove lower bounds or separations, you want to avoid arguing about a specific programming language.
+Section 2.2 then asks the right follow-up question: what does it even mean for a Turing machine to solve a problem? Here the book introduces the distinction between *deciding* and *accepting* a language, and this distinction is more consequential than it might appear. A machine *decides* a language L if it always halts -- accepting strings in L and rejecting strings outside it. A machine merely *accepts* L if it halts and accepts strings in L, but may loop forever on strings outside it. These are genuinely different computational capacities, and the asymmetry is not an accident of the formalism. It is the first hint that there are problems where you can recognize a "yes" answer but cannot reliably detect a "no" -- a theme that returns with full force in Chapter 3 when the halting problem is shown to be undecidable, and again in Chapter 10 when coNP is introduced.
 
-## Configurations as the core semantic object
-The cleanest way to reason about a TM is via configurations (instantaneous descriptions). You see the start of a general proof pattern:
-- define a state space,
-- define a one-step transition relation,
-- define acceptance/rejection as reachability of halting configurations.
+The term "recursively enumerable" for languages accepted by some Turing machine is a historical artifact -- it comes from a tradition in mathematical logic going back to Gödel, Herbrand, and Kleene long before the word "algorithm" had its modern meaning (see Soare, R.I. *Recursively Enumerable Sets and Degrees*, Springer, 1987, for the full story). But the terminology carries real content: a recursively enumerable language is one whose "yes" instances can be *listed*, or enumerated, by a systematic procedure -- even if that procedure never terminates on "no" instances. Proposition 2.5 in the book makes this concrete.
 
-Later, this becomes the template for reductions: encode one reachability problem into another.
-
-## Halting, accepting, rejecting: a subtle but important distinction
-Even in this basic model, three outcomes matter:
-- accept,
-- reject,
-- loop (never halt).
-
-This is the simplest place where computability and complexity separate:
-- computability cares whether halting is guaranteed at all,
-- complexity assumes halting and asks how expensive it is.
-
-A common later move: restrict attention to machines that halt on all inputs to define time/space complexity classes cleanly.
-
-## Variant-equivalence is already being hinted at
-Even though the model looks arbitrary (endmarkers, blank symbol conventions, optional “stay put” moves), the chapter’s meta-message is:
-- these details don’t matter for asymptotic complexity,
-- because reasonable variants simulate each other with bounded overhead.
-
-You should mentally tag every “design choice” as either:
-- “convenience” (changes constants/polynomial factors), or
-- “power” (changes the model class).
-
-## Cross-source insight: why TM proofs look like automata proofs, but aren’t
-The proof style resembles finite automata (transition graphs, reachability), but with one decisive difference:
-- the tape gives an unbounded configuration space, so reachability reasoning can become nontrivial (and later undecidable).
-
-So the section is also quietly setting up Chapter 3: once configurations become first-class objects, you can write machines that *encode machines*.
-
----
-
-## References
-- Christos H. Papadimitriou, *Computational Complexity*, Addison–Wesley, 1994. (Chapter 2, Section 2.1)
-- Michael Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2012. (Formal TM definitions; configurations)
-- John E. Hopcroft, Rajeev Motwani, Jeffrey D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Pearson, 2006. (TM semantics; acceptance vs rejection)
-- Sanjeev Arora, Boaz Barak, *Computational Complexity: A Modern Approach*, Cambridge Univ. Press, 2009. (Machine-independence perspective)
+The section closes by confronting the representation problem head-on. Turing machines operate on strings, but the problems we care about involve graphs, numbers, and networks. The resolution is that any finite mathematical object can be encoded as a string, and all reasonable encodings are polynomially related to each other. This is not a trivial claim -- it rules out unary encoding of integers as "unreasonable," for instance, because unary encoding is exponentially longer than binary and would make the input length a completely misleading measure of problem size. The commitment to binary (or any similarly succinct) encoding is what makes complexity theory talk meaningfully about computational practice rather than about artifacts of notation.
