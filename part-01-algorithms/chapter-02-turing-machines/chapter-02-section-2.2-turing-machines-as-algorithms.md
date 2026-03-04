@@ -4,11 +4,9 @@ This section makes a foundational complexity move:
 - an “algorithmic problem” is represented as a language (a set of strings),
 - “solving” the problem means deciding membership.
 
-This is not only a formal convenience. It is what makes reductions and complexity classes possible later:
-- problems become objects,
-- transformations between problems become proofs.
+This is not only a formal convenience. It is what makes reductions and complexity classes possible later.
 
-## Encoding is not an afterthought; it is part of the theory
+## Encoding is part of the theory
 Papadimitriou emphasizes that “mathematical objects of interest” are encoded as strings:
 - numbers in binary,
 - tuples with delimiters,
@@ -23,7 +21,7 @@ A useful working discipline:
 That discipline is one reason complexity results survive changes of representation.
 
 ## Correctness proofs by invariant + induction
-The section’s example machines (e.g., palindrome recognition) illustrate a proof pattern that becomes standard:
+The section’s example machines (e.g., palindrome recognition) illustrate a proof pattern that are somewhat a standard:
 - define an invariant about what remains to be checked,
 - show each loop iteration preserves it,
 - show termination implies correctness.
@@ -38,12 +36,7 @@ The section pushes you to treat “time” as a *primitive counter*:
 Later, when you compare models, you will be forced to argue that “one RAM instruction” corresponds to “polylog steps on a TM” (or similar). This is where the bookkeeping begins.
 
 ## Cross-source insight: why “language” is the right abstraction
-If you compare with computability texts (Sipser, Hopcroft–Ullman), you’ll see that “language” is the natural abstraction for:
-- decidability and undecidability,
-- reductions,
-- complexity classes.
-
-The same abstraction supports everything from SAT to factoring to graph isomorphism—once you accept “everything is a string,” complexity becomes a unifying theory rather than a zoo of ad hoc problems.
+If you compare with computability texts (Sipser, Hopcroft–Ullman), you’ll see that “language” is the natural abstraction for decidability and undecidability, reductions, and complexity classes. The same abstraction supports everything from SAT to factoring to graph isomorphism—once you accept “everything is a string,” complexity becomes a unifying theory rather than a zoo of ad hoc problems.
 
 ---
 
